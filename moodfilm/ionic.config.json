@@ -1,0 +1,7 @@
+{
+  "name": "moodfilm",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

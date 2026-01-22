@@ -1,0 +1,25 @@
+ion-content {
+  --background: none; /* reseteamos posibles conflictos */
+  background: radial-gradient(circle at top left,
+          rgba(253, 177, 37, 0.914),
+          transparent 40%),
+      radial-gradient(circle at bottom right,
+          rgba(150, 53, 219, 0.645),
+          transparent 45%),
+      linear-gradient(135deg, #ead029, #6A0DAD);
+}
+
+ion-row {
+  justify-content: center;
+}
+
+ion-col {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+ion-card ion-img {
+  display: block;
+  margin: 0 auto 8px auto;
+}
