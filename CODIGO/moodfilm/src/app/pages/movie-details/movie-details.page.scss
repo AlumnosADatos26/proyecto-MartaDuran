@@ -1,0 +1,111 @@
+/* Fondo moderno con degradado suave y sutil */
+ion-content {
+  --background: none;
+  background: linear-gradient(135deg, #4B0082, #8A2BE2); /* morado profundo a violeta */
+  color: #fff; /* texto por defecto blanco */
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Texto de carga centrado */
+.loading-text {
+  text-align: center;
+  margin-top: 50px;
+  color: #FFD700;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* Contenedor principal: imagen + info */
+.movie-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: flex-start;
+  margin-top: 16px;
+}
+
+/* Imagen de la película */
+.movie-image img {
+  width: 250px;
+  border-radius: 12px;
+  border: 4px solid #FFD700; /* borde dorado para resaltar */
+  object-fit: cover;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+}
+
+/* Información de la película */
+.movie-info {
+  flex: 1;
+}
+
+.movie-info h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  color: #FFD700;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.movie-info h3 {
+  font-size: 1.1rem;
+  color: #FFA500;
+  margin-bottom: 12px;
+}
+
+/* Resumen y detalles */
+.movie-overview h4,
+.movie-details strong {
+  color: #FFA500;
+}
+
+.movie-overview p,
+.movie-details p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #EEE;
+}
+
+/* Botones de acciones: añadir a lista, comentar */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.action-buttons ion-button {
+  --background: #FFD700;  /* amarillo dorado */
+  --color: #4B0082;       /* morado profundo */
+  --border-radius: 20px;
+  font-weight: 600;
+  --padding-start: 20px;
+  --padding-end: 20px;
+}
+
+.action-buttons ion-button:hover {
+  --background: #FFA500;  /* naranja */
+  --color: #fff;
+}
+
+/* Responsive: móvil */
+@media (max-width: 768px) {
+  .movie-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .movie-image img {
+    width: 70%;
+    margin-bottom: 16px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

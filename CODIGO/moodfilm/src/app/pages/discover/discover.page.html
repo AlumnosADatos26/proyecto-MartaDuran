@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      Películas Populares
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content class="ion-padding">
+
+  <div *ngIf="loading && movies.length === 0" class="loading-text">
+    Cargando películas...
+  </div>
+
+  <ion-grid *ngIf="movies.length > 0">
+    <ion-row>
+      <ng-container *ngFor="let movie of movies">
+        <ion-col size="12" size-md="6" size-lg="4" *ngIf="isValidMovie(movie)">
+          <ion-card button (click)="verFicha(movie)">
+            <ion-img [src]="getPosterUrl(movie.poster_path)"></ion-img>
+
+            <ion-card-header>
+              <ion-card-title>
+                {{ movie.title || 'Sin título' }}
+              </ion-card-title>
+            </ion-card-header>
+
+            <ion-card-content>
+              <div class="card-footer">
+                <div>⭐ {{ movie.vote_average != null ? movie.vote_average.toFixed(1) : 'N/A' }}</div>
+                <ion-chip color="warning">
+                  {{ movie.release_date ? movie.release_date.split('-')[0] : '---' }}
+                </ion-chip>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ng-container>
+    </ion-row>
+
+
+  </ion-grid>
+
+
+  <div class="load-more-button">
+    <ion-button (click)="loadMoreMovies()">
+      +Más
+    </ion-button>
+  </div>
+
+</ion-content>

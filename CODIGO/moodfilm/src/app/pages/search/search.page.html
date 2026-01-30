@@ -1,0 +1,138 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Buscar películas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Barra de búsqueda principal -->
+  <ion-searchbar 
+    [(ngModel)]="nombrePeli" 
+    placeholder="Busca por título de película"
+    (ionInput)="onSearchInput()"
+    debounce="500">
+  </ion-searchbar>
+
+  <!-- Botón para mostrar/ocultar filtros -->
+  <ion-button expand="block" fill="outline" (click)="toggleFilters()">
+    <ion-icon name="filter-outline" slot="start"></ion-icon>
+    {{ showFilters ? 'Ocultar filtros' : 'Mostrar filtros' }}
+  </ion-button>
+
+  <!-- Panel de filtros -->
+  <div *ngIf="showFilters" class="filters-container">
+    
+    <!-- Filtro por género -->
+    <ion-item>
+      <ion-label>Género</ion-label>
+      <ion-select [(ngModel)]="selectedGenre" placeholder="Todos los géneros" (ionChange)="applyFilters()">
+        <ion-select-option value="">Todos</ion-select-option>
+        <ion-select-option *ngFor="let genre of genres" [value]="genre.id">
+          {{ genre.name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Filtro por año -->
+    <ion-item>
+      <ion-label>Año</ion-label>
+      <ion-select [(ngModel)]="selectedYear" placeholder="Cualquier año" (ionChange)="applyFilters()">
+        <ion-select-option value="">Cualquier año</ion-select-option>
+        <ion-select-option *ngFor="let year of years" [value]="year">
+          {{ year }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Filtro por duración -->
+    <ion-item>
+      <ion-label>Duración</ion-label>
+      <ion-select [(ngModel)]="selectedDuration" placeholder="Cualquier duración" (ionChange)="applyFilters()">
+        <ion-select-option value="">Cualquier duración</ion-select-option>
+        <ion-select-option value="short">Corta (< 90 min)</ion-select-option>
+        <ion-select-option value="medium">Media (90-120 min)</ion-select-option>
+        <ion-select-option value="long">Larga (> 120 min)</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Filtro por puntuación mínima -->
+    <ion-item>
+      <ion-label>Puntuación mínima</ion-label>
+      <ion-select [(ngModel)]="selectedRating" placeholder="Cualquiera" (ionChange)="applyFilters()">
+        <ion-select-option value="">Cualquiera</ion-select-option>
+        <ion-select-option value="7">7+ ⭐</ion-select-option>
+        <ion-select-option value="8">8+ ⭐⭐</ion-select-option>
+        <ion-select-option value="9">9+ ⭐⭐⭐</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Filtro por estado de ánimo (concepto de tu proyecto) -->
+    <ion-item>
+      <ion-label>Estado de ánimo</ion-label>
+      <ion-select [(ngModel)]="selectedMood" placeholder="Selecciona tu mood" (ionChange)="applyFilters()">
+        <ion-select-option value="">Ninguno</ion-select-option>
+        <ion-select-option value="happy">Feliz </ion-select-option>
+        <ion-select-option value="sad">Triste </ion-select-option>
+        <ion-select-option value="excited">Emocionado </ion-select-option>
+        <ion-select-option value="relaxed">Relajado </ion-select-option>
+        <ion-select-option value="scared">Asustado </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+
+    <!-- Botones de acción -->
+    <div class="filter-buttons">
+      <ion-button expand="block" (click)="applyFilters()">
+        <ion-icon name="search-outline" slot="start"></ion-icon>
+        Aplicar filtros
+      </ion-button>
+      <ion-button expand="block" fill="clear" (click)="clearFilters()">
+        <ion-icon name="close-outline" slot="start"></ion-icon>
+        Limpiar filtros
+      </ion-button>
+    </div>
+
+  </div>
+
+  <!-- Indicador de carga -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner></ion-spinner>
+    <p>Buscando películas...</p>
+  </div>
+
+  <!-- Mensaje cuando no hay resultados -->
+  <div *ngIf="searching && peliculas.length === 0 && !isLoading" class="no-results">
+    <ion-icon name="film-outline" size="large"></ion-icon>
+    <p>No se encontraron películas.</p>
+    <p class="hint">Intenta con otros términos o filtros</p>
+  </div>
+
+  <!-- Resultados -->
+  <div *ngIf="peliculas.length > 0" class="results-header">
+    <p>{{ peliculas.length }} resultado{{ peliculas.length !== 1 ? 's' : '' }}</p>
+  </div>
+
+  <ion-grid *ngIf="peliculas.length > 0">
+    <ion-row>
+      <ion-col size="6" size-md="4" size-lg="3" *ngFor="let peli of peliculas">
+        <ion-card (click)="verFicha(peli)" class="movie-card">
+          <div class="poster-container">
+            <img [src]="getImageUrl(peli.poster_path)" [alt]="peli.title">
+            <div class="rating-badge" *ngIf="peli.vote_average > 0">
+              <ion-icon name="star"></ion-icon>
+              {{ peli.vote_average | number:'1.1-1' }}
+            </div>
+          </div>
+          <ion-card-header>
+            <ion-card-title>{{ peli.title }}</ion-card-title>
+            <ion-card-subtitle *ngIf="peli.release_date">
+              {{ peli.release_date | date:'yyyy' }}
+            </ion-card-subtitle>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>
