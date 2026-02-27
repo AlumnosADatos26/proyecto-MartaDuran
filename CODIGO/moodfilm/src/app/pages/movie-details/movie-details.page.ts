@@ -4,6 +4,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { MovieService } from 'src/app/services/MovieService';
 import { environment } from 'src/environments/environment';
+import { NavController } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { arrowBackOutline, playCircleOutline } from 'ionicons/icons';
+
 
 @Component({
   selector: 'app-movie-details',
@@ -19,12 +23,20 @@ export class MovieDetailsPage implements OnInit {
   movie: any;                                         // peli seleccionada
   loading = true;                                     // controla el estado de carga
   readonly IMAGE_BASE_URL = environment.tmdbImageUrl;   //obtenemos la url de las imágenes desde enviroment
-  
+  trailerKey: string | null = null; // guardamos id de youtube
+
   constructor(
     private route: ActivatedRoute,  // para leer el id desde la url
     private router: Router,         // para poder navegar
-    private movieService: MovieService
-  ) { }
+    private movieService: MovieService,
+    private navCtrl: NavController
+  ) {
+    addIcons({
+      arrowBackOutline,
+      playCircleOutline
+    });
+
+  }
 
   ngOnInit() {
     // obtenermos el id de la peli desde los queryParams
@@ -51,10 +63,13 @@ export class MovieDetailsPage implements OnInit {
     try {
       this.loading = true;
       this.movie = await this.movieService.getMovieDetails(id);
+      await this.loadTrailer(id);
 
-    } catch (error) {
+    } 
+    catch (error) {
       console.error('Error al cargar detalles', error);
-    } finally {
+    } 
+    finally {
       this.loading = false;
     }
   }
@@ -64,7 +79,6 @@ export class MovieDetailsPage implements OnInit {
   /*Si movie existe y movie.genres también, sigue adelante.
   Si no, devuelve undefined. Rrecorre el array y solo coge el nombre de cada género.
   ?? '' es el valor por defecto: si no hay géneros, devuelve cadena vacía '' */
-
   get genresText(): string {
     return this.movie?.genres?.map((g: { id: number; name: string }) => g.name).join(', ') ?? '';
   }
@@ -86,6 +100,22 @@ export class MovieDetailsPage implements OnInit {
   openCommentModal(movie: any) {
     // Abrir modal para escribir comentario
     console.log('Abrir modal para comentar:', movie.title);
+  }
+
+  async loadTrailer(id: number) {
+    const video = await this.movieService.getBestTrailer(id);
+
+    this.trailerKey = video ? video.key : null;
+  }
+  openTrailer() {
+    if (!this.trailerKey) return;
+
+    const url = `https://www.youtube.com/watch?v=${this.trailerKey}`;
+    window.open(url, '_blank');
+  }
+
+  goBack() {
+    this.navCtrl.back();
   }
 
 

@@ -1,2 +1,9 @@
 // For information on how to create your own theme, please refer to:
 // https://ionicframework.com/docs/theming/
+
+ion-toolbar {
+  --background:rgb(132, 40, 185);
+  --color: #ffffff; 
+  --border-width: 1;
+   text-align: center;
+}

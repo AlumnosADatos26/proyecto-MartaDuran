@@ -1,9 +1,27 @@
+<ion-header translucent="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="goBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>{{ movie?.title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
 <ng-container *ngIf="movie; else loadingTemplate">
   <ion-content class="ion-padding">
     <div class="movie-container">
       <div class="movie-image">
         <img [src]="getPosterUrl(movie.poster_path)" alt="{{ movie.title }}">
+        <ion-button expand="block" fill="outline" color="warning" *ngIf="trailerKey" (click)="openTrailer()">
+          <ion-icon name="play-circle-outline" slot="start"></ion-icon>
+          trailer
+        </ion-button>
       </div>
+
       <div class="movie-info">
         <h1>{{ movie.title }}</h1>
         <h3>{{ movie.release_date | date:'longDate':'':'es' }} | ⭐ {{ movie.vote_average?.toFixed(1) }}</h3>

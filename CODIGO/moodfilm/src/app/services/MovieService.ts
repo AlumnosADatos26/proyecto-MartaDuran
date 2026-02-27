@@ -68,7 +68,7 @@ export class MovieService {
   // Descubre películas con filtros avanzados (género, año, puntuación, idioma, etc.)
   discoverMovies(filters: any = {}, page = 1): Promise<any> {
     const url = `${environment.tmdbBaseUrl}/discover/movie`;
-    
+
     return firstValueFrom(
       this.http.get(url, {
         params: {
@@ -80,4 +80,59 @@ export class MovieService {
       })
     );
   }
+
+
+// 🔥 Devuelve el mejor vídeo disponible con prioridad tipo Netflix
+async getBestTrailer(movieId: number): Promise<any | null> {
+  const url = `${environment.tmdbBaseUrl}/movie/${movieId}/videos`;
+
+  const res: any = await firstValueFrom(
+    this.http.get(url, {
+      params: {
+        api_key: environment.tmdbApiKey,
+        language: 'es-ES'
+      }
+    })
+  );
+
+  const videos = res.results || [];
+
+  if (!videos.length) return null;
+
+  // 1️⃣ trailer en español
+  let trailer = videos.find(
+    (v: any) =>
+      v.site === 'YouTube' &&
+      v.type === 'Trailer' &&
+      v.iso_639_1 === 'es'
+  );
+
+  // 2️⃣ trailer en inglés
+  if (!trailer) {
+    trailer = videos.find(
+      (v: any) =>
+        v.site === 'YouTube' &&
+        v.type === 'Trailer' &&
+        v.iso_639_1 === 'en'
+    );
+  }
+
+  // 3️⃣ cualquier trailer youtube
+  if (!trailer) {
+    trailer = videos.find(
+      (v: any) =>
+        v.site === 'YouTube' &&
+        v.type === 'Trailer'
+    );
+  }
+
+  // 4️⃣ cualquier video youtube
+  if (!trailer) {
+    trailer = videos.find((v: any) => v.site === 'YouTube');
+  }
+
+  return trailer || null;
+}
+
+
 }
