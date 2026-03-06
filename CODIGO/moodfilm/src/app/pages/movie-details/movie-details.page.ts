@@ -84,7 +84,6 @@ export class MovieDetailsPage implements OnInit {
   }
 
 
-
   //métodos provisionales, solo para probar mientras no tengamos la api ni la BD
   //datos de prueba:
   comments = [
@@ -93,7 +92,7 @@ export class MovieDetailsPage implements OnInit {
   ];
 
   addToList(movie: any) {
-    // Llamada a tu servicio: movieService.addToList(movie.id)
+    // Llamada al servicio: movieService.addToList(movie.id)
     console.log('Añadir a lista:', movie.title);
   }
 
@@ -117,8 +116,6 @@ export class MovieDetailsPage implements OnInit {
   goBack() {
     this.navCtrl.back();
   }
-
-
 
 }
 

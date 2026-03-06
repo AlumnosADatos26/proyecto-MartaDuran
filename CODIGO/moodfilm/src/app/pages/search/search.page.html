@@ -20,22 +20,21 @@
   <!-- panel de filtros -->
   <div *ngIf="showFilters" class="filters-container">
 
-    <!-- GENERO -->
-    <p class="filter-title">Género</p>
+    <!-- GENERO: desactivado si hay mood seleccionado -->
+    <p class="filter-title" [class.disabled]="selectedMood">Género</p>
     <div class="chips-row">
-      <ion-chip *ngFor="let genre of genres"
-        [class.active]="selectedGenre === genre.id"
-        (click)="toggleGenre(genre.id)">
+      <ion-chip *ngFor="let genre of genres" [class.active]="selectedGenre === genre.id" [disabled]="!!selectedMood"
+        (click)="!selectedMood && toggleGenre(genre.id)">
         {{ genre.name }}
       </ion-chip>
     </div>
 
-    <!-- MOOD -->
-    <p class="filter-title">Estado de ánimo</p>
+    <!-- MOOD: desactivado si hay genero seleccionado -->
+    <p class="filter-title" [class.disabled]="selectedGenre">Estado de ánimo</p>
     <div class="chips-row">
       <ion-chip *ngFor="let mood of ['feliz','triste','emocionado','relajado','miedo']"
-        [class.active]="selectedMood === mood"
-        (click)="toggleMood(mood)">
+        [class.active]="selectedMood === mood" [disabled]="!!selectedGenre"
+        (click)="!selectedGenre && toggleMood(mood)">
         {{ mood }}
       </ion-chip>
     </div>
@@ -44,13 +43,13 @@
     <p class="filter-title">Duración</p>
     <div class="chips-row">
       <ion-chip [class.active]="selectedDuration === 'corta'" (click)="toggleDuration('corta')">
-        Corta (&lt;90 min)
+        Corta (~90 min)
       </ion-chip>
       <ion-chip [class.active]="selectedDuration === 'media'" (click)="toggleDuration('media')">
         Media (90-120 min)
       </ion-chip>
       <ion-chip [class.active]="selectedDuration === 'larga'" (click)="toggleDuration('larga')">
-        Larga (&gt;120 min)
+        Larga (+120 min)
       </ion-chip>
     </div>
 
@@ -100,16 +99,9 @@
     </ion-row>
   </ion-grid>
 
-  <ion-infinite-scroll
-    threshold="100px"
-    (ionInfinite)="loadMore($event)"
-    *ngIf="currentPage < totalPages">
-
-    <ion-infinite-scroll-content
-      loadingSpinner="crescent"
-      loadingText="Cargando más películas...">
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)" *ngIf="currentPage < totalPages">
+    <ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Cargando más películas...">
     </ion-infinite-scroll-content>
-
   </ion-infinite-scroll>
 
 </ion-content>

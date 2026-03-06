@@ -102,16 +102,27 @@ export class SearchPage implements OnInit {
 
       this.totalPages = res.total_pages || 1;
 
-      const cleanResults = (res.results || []).filter((movie: any) =>
-        movie.poster_path &&
-        movie.vote_count > 5 &&
-        movie.overview
-      );
+      // resultados que llegan de la api:
+      const resultadosNuevos = res.results || [];
 
-      this.peliculas = [...this.peliculas, ...cleanResults];
+      // lista con solo pelis con poster, votos y descripción
+      const resultadosFiltrados = [];
+      for (const movie of resultadosNuevos) {
+        if (movie.poster_path && movie.vote_count > 5 && movie.overview) {
+          resultadosFiltrados.push(movie);
+        }
+      }
 
-      // aplicar filtros cliente (duración y combinación)
-      this.applyClientSideFilters();
+      // evitamis duplicados: solo añadimos pelis que no estén ya en la lista
+      for (const movie of resultadosFiltrados) {
+        // buscamos si ya existe una peli con ese id
+        const yaExiste = this.peliculas.find(p => p.id === movie.id);
+
+        //si no existe la añadimos
+        if (!yaExiste) {
+          this.peliculas.push(movie);
+        }
+      }
 
     } catch (error) {
       console.error('Error buscando películas:', error);
@@ -121,34 +132,44 @@ export class SearchPage implements OnInit {
   }
 
   buildFilterParams() {
+    const params: { [key: string]: string } = {};
 
-    const params: any = {};
-    let genresArray: string[] = [];
+    //mood y genero son excluyentes, solo se usa uno de los dos
+    if (this.selectedMood) {
+      // el mood define los generos internamente
+      const generosDelMood = this.moodToGenres[this.selectedMood] || [];
+      if (generosDelMood.length > 0) {
+        params['with_genres'] = generosDelMood.join(',');
+      }
 
-    if (this.selectedGenre) genresArray.push(this.selectedGenre);
-
-    if (this.selectedMood && this.moodToGenres[this.selectedMood]) {
-      genresArray = [...genresArray, ...this.moodToGenres[this.selectedMood].map((g: number) => g.toString())];
+    } else if (this.selectedGenre) {
+      //si no hay mood, usamos el género manual
+      params['with_genres'] = this.selectedGenre;
     }
 
-    if (genresArray.length > 0) {
-      params.with_genres = genresArray.join(',');
+    //pero duración se combina con cualquiera de los dos sin problema:
+    if (this.selectedDuration === 'corta') {
+      params['with_runtime.lte'] = '90';
+    } else if (this.selectedDuration === 'media') {
+      params['with_runtime.gte'] = '90';
+      params['with_runtime.lte'] = '120';
+    } else if (this.selectedDuration === 'larga') {
+      params['with_runtime.gte'] = '120';
     }
 
-    params['vote_count.gte'] = 50;
-    params.include_adult = false;
+    params['vote_count.gte'] = '50';
+    params['include_adult'] = 'false';
 
     return params;
   }
 
-applyClientSideFilters() {
-  // este metodo queda vacío porque los filtros los aplicamos en el backend
-  console.log("Filtros aplicados en backend:", {
-    genre: this.selectedGenre,
-    mood: this.selectedMood,
-    duration: this.selectedDuration
-  });
-}
+  applyClientSideFilters() {
+    console.log("Filtros aplicados en backend:", {
+      genre: this.selectedGenre,
+      mood: this.selectedMood,
+      duration: this.selectedDuration
+    });
+  }
 
   hasActiveFilters(): boolean {
     return !!(this.selectedGenre || this.selectedDuration || this.selectedMood);

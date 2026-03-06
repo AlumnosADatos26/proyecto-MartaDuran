@@ -10,129 +10,71 @@ export class MovieService {
 
   constructor(private http: HttpClient) { }
 
-  // Obtiene películas mas recientes y populares
+  //obtenemos pelis más recientes y populares
   getPopularMovies(page = 1): Promise<any> {
-    const url = `${environment.tmdbBaseUrl}/movie/popular`;
-    return firstValueFrom(
-      this.http.get(url, {
-        params: {
-          api_key: environment.tmdbApiKey,
-          language: 'es-ES',
-          page: page.toString()
-        }
-      })
-    );
+    const url = `${environment.apiBaseUrl}/tmdb/populares?page=${page}`;
+    return firstValueFrom(this.http.get(url));
   }
 
-  // Obtiene los detalles de una película concreta
+  //obtenemos los detalles de una pelicula concreta
   getMovieDetails(id: number): Promise<any> {
-    const url = `${environment.tmdbBaseUrl}/movie/${id}`;
-    return firstValueFrom(
-      this.http.get(url, {
-        params: {
-          api_key: environment.tmdbApiKey,
-          language: 'es-ES'
-        }
-      })
-    );
+    const url = `${environment.apiBaseUrl}/tmdb/${id}`;
+    return firstValueFrom(this.http.get(url));
   }
 
-  // Busca películas por título
+  // busca pelicula por titulo
   searchMovies(query: string, page = 1): Promise<any> {
-    const url = `${environment.tmdbBaseUrl}/search/movie`;
-    return firstValueFrom(
-      this.http.get(url, {
-        params: {
-          api_key: environment.tmdbApiKey,
-          language: 'es-ES',
-          query,
-          page: page.toString()
-        }
-      })
-    );
+    const url = `${environment.apiBaseUrl}/tmdb/buscar?query=${query}&page=${page}`;
+    return firstValueFrom(this.http.get(url));
   }
 
-  // Obtiene la lista de géneros disponibles
+  //obtiene la lista de generos disponibles
   getGenres(): Promise<any> {
-    const url = `${environment.tmdbBaseUrl}/genre/movie/list`;
-    return firstValueFrom(
-      this.http.get(url, {
-        params: {
-          api_key: environment.tmdbApiKey,
-          language: 'es-ES'
-        }
-      })
-    );
+    const url = `${environment.apiBaseUrl}/tmdb/generos`;
+    return firstValueFrom(this.http.get(url));
   }
 
-  // Descubre películas con filtros avanzados (género, año, puntuación, idioma, etc.)
-  discoverMovies(filters: any = {}, page = 1): Promise<any> {
-    const url = `${environment.tmdbBaseUrl}/discover/movie`;
+  //descubre pelis con filtros avanzados (genero, año, puntuación, idioma, etc.)
+  discoverMovies(filters: any = {}): Promise<any> {
+    //cnstruimos la url manualmente para que los puntos no se codifiquen
+    let queryString = '';
 
-    return firstValueFrom(
-      this.http.get(url, {
-        params: {
-          api_key: environment.tmdbApiKey,
-          language: 'es-ES',
-          page: page.toString(),
-          ...filters
-        }
-      })
-    );
+    //recorremos cada filtro y lo añadimos a la url
+    for (const key of Object.keys(filters)) {
+      const value = filters[key];
+      queryString += '&' + key + '=' + value;
+    }
+
+    const url = environment.apiBaseUrl + '/tmdb/discover?' + queryString;
+    return firstValueFrom(this.http.get(url));
   }
 
+  //devuelve el mejor trailer disponible
+  async getBestTrailer(movieId: number): Promise<any | null> {
+    const url = `${environment.apiBaseUrl}/tmdb/${movieId}/videos`;
+    const res: any = await firstValueFrom(this.http.get(url));
+    const videos = res.results || [];
 
-// 🔥 Devuelve el mejor vídeo disponible con prioridad tipo Netflix
-async getBestTrailer(movieId: number): Promise<any | null> {
-  const url = `${environment.tmdbBaseUrl}/movie/${movieId}/videos`;
+    if (!videos.length) {
+      return null;
+    }
 
-  const res: any = await firstValueFrom(
-    this.http.get(url, {
-      params: {
-        api_key: environment.tmdbApiKey,
-        language: 'es-ES'
-      }
-    })
-  );
+    //trailer en español
+    let trailer = videos.find((v: any) => v.site === 'YouTube' && v.type === 'Trailer' && v.iso_639_1 === 'es');
 
-  const videos = res.results || [];
+    //en ingles
+    if (!trailer) {
+      trailer = videos.find((v: any) => v.site === 'YouTube' && v.type === 'Trailer' && v.iso_639_1 === 'en');
+    }
+    //culaquiera trailer de yt
+    if (!trailer) {
+      trailer = videos.find((v: any) => v.site === 'YouTube' && v.type === 'Trailer');
+    }
+    //cualquier video de yt
+    if (!trailer) {
+      trailer = videos.find((v: any) => v.site === 'YouTube');
+    }
 
-  if (!videos.length) return null;
-
-  // 1️⃣ trailer en español
-  let trailer = videos.find(
-    (v: any) =>
-      v.site === 'YouTube' &&
-      v.type === 'Trailer' &&
-      v.iso_639_1 === 'es'
-  );
-
-  // 2️⃣ trailer en inglés
-  if (!trailer) {
-    trailer = videos.find(
-      (v: any) =>
-        v.site === 'YouTube' &&
-        v.type === 'Trailer' &&
-        v.iso_639_1 === 'en'
-    );
+    return trailer || null;
   }
-
-  // 3️⃣ cualquier trailer youtube
-  if (!trailer) {
-    trailer = videos.find(
-      (v: any) =>
-        v.site === 'YouTube' &&
-        v.type === 'Trailer'
-    );
-  }
-
-  // 4️⃣ cualquier video youtube
-  if (!trailer) {
-    trailer = videos.find((v: any) => v.site === 'YouTube');
-  }
-
-  return trailer || null;
-}
-
-
 }
