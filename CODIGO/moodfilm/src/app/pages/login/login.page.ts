@@ -1,20 +1,63 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/authService';
+import { IonicModule } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { mailOutline, lockClosedOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonicModule, FormsModule, CommonModule]
 })
-export class LoginPage implements OnInit {
+export class LoginPage {
 
-  constructor() { }
+  email = '';
+  password = '';
 
-  ngOnInit() {
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private auth: AuthService
+  ) {
+    addIcons({ mailOutline, lockClosedOutline });
   }
 
+  // login local con email y contraseña
+  login() {
+    this.http.post<any>('http://localhost:8080/auth/login', {
+      email: this.email,
+      password: this.password
+    }).subscribe({
+      next: (res) => {
+        this.auth.saveToken(res.token);
+        this.router.navigate(['/tabs/discover']);
+      },
+      error: (err) => {
+        console.error('Error al iniciar sesion:', err);
+        alert('Email o contraseña incorrectos');
+      }
+    });
+  }
+
+  // Login con google (falta implementarlo)
+  loginGoogle() {
+    alert('Login con Google próximamente');
+  }
+
+  // entrar sin cuenta
+  loginGuest() {
+    this.auth.setGuest();
+    this.router.navigate(['/tabs/discover']);
+  }
+
+  //ir a la pantalla de registro
+  goToRegister() {
+    this.router.navigate(['/register']);
+  }
 }

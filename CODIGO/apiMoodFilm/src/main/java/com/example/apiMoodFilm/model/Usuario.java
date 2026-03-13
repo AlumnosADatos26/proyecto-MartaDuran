@@ -1,4 +1,6 @@
 package com.example.apiMoodFilm.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,8 +19,15 @@ public class Usuario {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @JsonIgnore
     private String password;
+
+    private String googleId;
+
+    private String fotoPerfil;
+
+    @Enumerated(EnumType.STRING)
+    private AuthProvider proveedor;
 
     private LocalDateTime fechaRegistro = LocalDateTime.now();
 
@@ -28,9 +37,10 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comentario> comentarios = new ArrayList<>();
 
-    public Usuario() {}
-    // GETTERS Y SETTERS
+    public Usuario() {
+    }
 
+    //getters y setters
     public Long getId() {
         return id;
     }
@@ -63,6 +73,30 @@ public class Usuario {
         this.password = password;
     }
 
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+
+    public String getFotoPerfil() {
+        return fotoPerfil;
+    }
+
+    public void setFotoPerfil(String fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
+    }
+
+    public AuthProvider getProveedor() {
+        return proveedor;
+    }
+
+    public void setProveedor(AuthProvider proveedor) {
+        this.proveedor = proveedor;
+    }
+
     public LocalDateTime getFechaRegistro() {
         return fechaRegistro;
     }
@@ -86,5 +120,4 @@ public class Usuario {
     public void setComentarios(List<Comentario> comentarios) {
         this.comentarios = comentarios;
     }
-
 }

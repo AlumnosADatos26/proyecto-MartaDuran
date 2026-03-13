@@ -8,11 +8,11 @@ import java.util.Map;
 @Service
 public class TmdbService {
 
-    private final String apiKey = "ef7e2eea6a70b4a7b8bb8c73cdf9d549"; // reemplaza con tu clave TMDB
+    private final String apiKey = "ef7e2eea6a70b4a7b8bb8c73cdf9d549"; // reemplaza con la clave TMDB
     private final String baseUrl = "https://api.themoviedb.org/3";
     private final RestTemplate restTemplate = new RestTemplate();
 
-    // películas populares
+    // peliculas populares
     public Object getPopularMovies(int page) {
         String url = String.format("%s/movie/popular?api_key=%s&language=es-ES&page=%d",
                 baseUrl, apiKey, page);
@@ -26,7 +26,7 @@ public class TmdbService {
         return restTemplate.getForObject(url, Object.class);
     }
 
-    // buuscar por título
+    // buuscar por titulo
     public Object searchMovies(String query, int page) {
         String url = String.format("%s/search/movie?api_key=%s&language=es-ES&query=%s&page=%d",
                 baseUrl, apiKey, query.replace(" ", "%20"), page);

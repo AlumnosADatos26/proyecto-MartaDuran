@@ -21,6 +21,17 @@ public class Lista {
     @OneToMany(mappedBy = "lista", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comentario> comentarios = new ArrayList<>();
 
+    @OneToMany(mappedBy = "lista", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ListaPelicula> peliculas = new ArrayList<>();
+
+    public List<ListaPelicula> getPeliculas() {
+        return peliculas;
+    }
+
+    public void setPeliculas(List<ListaPelicula> peliculas) {
+        this.peliculas = peliculas;
+    }
+
     public Lista() {
     }
 

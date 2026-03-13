@@ -1,13 +1,9 @@
-
 package com.example.apiMoodFilm.controller;
 
-import com.example.apiMoodFilm.dto.ListaDTO;
-import com.example.apiMoodFilm.model.Lista;
+import com.example.apiMoodFilm.model.ListaPelicula;
 import com.example.apiMoodFilm.service.ListaService;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/listas")
@@ -20,29 +16,23 @@ public class ListaController {
         this.listaService = listaService;
     }
 
-    @PostMapping
-    public ListaDTO crearLista(@RequestBody Lista lista) {
-        Lista l = listaService.guardar(lista);
-        return new ListaDTO(l.getId(), l.getNombre(), l.getUsuario().getId());
+    //añadir pelicula a una lista
+    @PostMapping("/{listaId}/peliculas")
+    public ListaPelicula agregarPelicula(@PathVariable Long listaId,
+            @RequestBody ListaPelicula pelicula) {
+        return listaService.agregarPelicula(listaId, pelicula);
     }
 
-    @GetMapping
-    public List<ListaDTO> obtenerListas() {
-        return listaService.obtenerTodas()
-                .stream()
-                .map(l -> new ListaDTO(l.getId(), l.getNombre(), l.getUsuario().getId()))
-                .collect(Collectors.toList());
+    //obtener todas las peliculas de una lista
+    @GetMapping("/{listaId}/peliculas")
+    public List<ListaPelicula> obtenerPeliculas(@PathVariable Long listaId) {
+        return listaService.obtenerPeliculas(listaId);
     }
 
-    @GetMapping("/{id}")
-    public ListaDTO obtenerListaPorId(@PathVariable Long id) {
-        Lista l = listaService.obtenerPorId(id)
-                .orElseThrow(() -> new RuntimeException("Lista no encontrada"));
-        return new ListaDTO(l.getId(), l.getNombre(), l.getUsuario().getId());
-    }
-
-    @DeleteMapping("/{id}")
-    public void eliminarLista(@PathVariable Long id) {
-        listaService.eliminar(id);
+    //eliminar pelicula de una lista
+    @DeleteMapping("/{listaId}/peliculas/{peliculaId}")
+    public void eliminarPelicula(@PathVariable Long listaId,
+            @PathVariable Long peliculaId) {
+        listaService.eliminarPelicula(listaId, peliculaId);
     }
 }

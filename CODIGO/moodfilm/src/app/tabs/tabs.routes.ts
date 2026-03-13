@@ -1,10 +1,9 @@
 import { Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
 
-
 export const routes: Routes = [
   {
-    path: 'tabs',
+    path: '',
     component: TabsPage,
     children: [
       {
@@ -24,15 +23,9 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/tabs/discover',
+        redirectTo: 'discover',
         pathMatch: 'full',
       },
     ],
-  },
-  {
-    path: '',
-    redirectTo: '/tabs/discover',
-    pathMatch: 'full',
-  },
+  }
 ];
-

@@ -1,9 +1,9 @@
-// fndo blanco
-.login-content {
+//mismo fondo que el login
+.register-content {
   --background: #f5f5f5;
 }
 
-.login-container {
+.register-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -13,8 +13,8 @@
   margin: 0 auto;
 }
 
-//sección de la cabecera:
-.login-header {
+//cabecera
+.register-header {
   text-align: center;
   margin-bottom: 40px;
 }
@@ -34,13 +34,14 @@
   line-height: 1.4;
 }
 
-//seccion del formulario
-.login-form {
+//para el formulario:
+.register-form {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
+//cada campo de texto :
 .input-group {
   display: flex;
   align-items: center;
@@ -50,6 +51,7 @@
   padding: 4px 16px;
   transition: border-color 0.2s;
 
+  //cuando el campo esta activo, el borde se vuelve morado
   &:focus-within {
     border-color: #6A0DAD;
   }
@@ -69,9 +71,17 @@
   font-size: 15px;
   width: 100%;
 }
+//mensaje de error en rojo
+.error-message {
+  color: #e53935;
+  font-size: 13px;
+  text-align: center;
+  margin: 0;
+  padding: 4px 0;
+}
 
-//los btns:
-.btn-login {
+//btn principal
+.btn-register {
   --background: #6A0DAD;
   --background-activated: #580a91;
   --border-radius: 12px;
@@ -82,56 +92,8 @@
   font-size: 16px;
 }
 
-.btn-google {
-  --border-color: #e0e0e0;
-  --color: #1a1a1a;
-  --border-radius: 12px;
-  --box-shadow: none;
-  --background-hover: #f9f9f9;
-  font-weight: 500;
-  height: 50px;
-  font-size: 15px;
-
-  .google-icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-  }
-}
-
-.btn-guest {
-  --color: #888;
-  --ripple-color: transparent;
-  font-size: 14px;
-  height: 40px;
-  margin-top: -4px;
-
-  &:hover {
-    --color: #555;
-  }
-}
-
-//separador
-.separator {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 4px 0;
-}
-
-.separator-line {
-  flex: 1;
-  height: 1px;
-  background: #e0e0e0;
-}
-
-.separator-text {
-  font-size: 13px;
-  color: #aaa;
-}
-
-//link del registro
-.register-link {
+//link del login
+.login-link {
   text-align: center;
   margin-top: 28px;
   font-size: 14px;
