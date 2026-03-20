@@ -1,13 +1,83 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>profile</ion-title>
+    <ion-title>Mi Perfil</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">profile</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="profile-content">
+
+  <!-- tarjeta de usuario-->
+  <div class="user-card">
+
+    <!--avatar con inicial del nombre -->
+    <div class="avatar">
+      <ion-icon name="person-outline"></ion-icon>
+    </div>
+
+    <h2 class="username">{{ username }}</h2>
+    <p class="email">{{ email }}</p>
+
+    <!-- btn editar perfil (si esta logueado) -->
+    <ion-button *ngIf="!esInvitado" fill="outline" size="small" class="btn-edit" (click)="editarPerfil()">
+      Editar perfil
+    </ion-button>
+
+    <!-- Si es invitado, btn para ir al login -->
+    <ion-button *ngIf="esInvitado" fill="outline" size="small" class="btn-edit" (click)="logout()">
+      Iniciar sesión
+    </ion-button>
+
+  </div>
+
+  <!-- estadisticas (solo si está logueado) -->
+  <div class="stats-row" *ngIf="!esInvitado">
+
+    <div class="stat-box">
+      <span class="stat-number">{{ peliculasVistas }}</span>
+      <span class="stat-label">Películas vistas</span>
+    </div>
+
+    <div class="stat-box">
+      <span class="stat-number">{{ peliculasFavoritas }}</span>
+      <span class="stat-label">Favoritas</span>
+    </div>
+
+    <div class="stat-box">
+      <span class="stat-number">{{ totalListas }}</span>
+      <span class="stat-label">Listas</span>
+    </div>
+
+  </div>
+
+  <!-- mis lostas (si está logueado) -->
+  <div class="section" *ngIf="!esInvitado">
+
+    <ion-item button (click)="verLista({id: -1, nombre: 'Mis Listas'})" lines="none" class="menu-item">
+      <div class="menu-icon-box" slot="start">
+        <ion-icon name="bookmark-outline"></ion-icon>
+      </div>
+      <ion-label>
+        <h3>Mis Listas</h3>
+        <p>Ver todas tus listas</p>
+      </ion-label>
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-item>
+
+    <!--una  fila por cada lista-->
+    <ion-item *ngFor="let lista of listas" button (click)="verLista(lista)" lines="none" class="menu-item lista-item">
+      <ion-icon name="film-outline" slot="start" class="lista-icon"></ion-icon>
+      <ion-label>{{ lista.nombre }}</ion-label>
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-item>
+
+  </div>
+
+  <!--bton de cerrar sesión-->
+  <div class="section">
+    <ion-button expand="block" fill="outline" color="warning" class="btn-logout" (click)="logout()">
+      <ion-icon name="log-out-outline" slot="start"></ion-icon>
+      {{ esInvitado ? 'Volver al inicio' : 'Cerrar sesión' }}
+    </ion-button>
+  </div>
+
 </ion-content>

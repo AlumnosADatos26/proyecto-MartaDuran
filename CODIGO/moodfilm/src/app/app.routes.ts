@@ -22,7 +22,17 @@ export const routes: Routes = [
   {
     path: 'register',
     loadComponent: () => import('./pages/register/register.page').then( m => m.RegisterPage)
+  },
+  {
+    path: 'list-movies',
+    loadComponent: () => import('./pages/list-movies/list-movies.page').then( m => m.ListMoviesPage)
+  }, 
+  {
+    path: 'movie-details',
+    loadComponent: () =>
+      import('./pages/movie-details/movie-details.page').then(m => m.MovieDetailsPage)
   }
+
 
 
 ];

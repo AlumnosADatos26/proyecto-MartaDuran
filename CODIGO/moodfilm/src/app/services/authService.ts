@@ -30,4 +30,30 @@ export class AuthService {
         return !!localStorage.getItem('token') || this.isGuest();
     }
 
+
+    //guRadamos el id del usuario al hacer login
+    saveUserId(id: number) {
+        localStorage.setItem('userId', id.toString());
+    }
+
+    //obtenemos el id del usuario guardado
+    getUserId(): number | null {
+        const id = localStorage.getItem('userId');
+        return id ? parseInt(id) : null;
+    }
+
+    //guardamos nombre d usuario y email del usuario
+    saveUserInfo(username: string, email: string) {
+        localStorage.setItem('username', username);
+        localStorage.setItem('email', email);
+    }
+
+    getUsername(): string {
+        return localStorage.getItem('username') || 'Usuario';
+    }
+
+    getEmail(): string {
+        return localStorage.getItem('email') || '';
+    }
+
 }

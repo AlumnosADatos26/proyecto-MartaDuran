@@ -1,0 +1,139 @@
+.profile-content {
+  --background: #f5f5f5;
+}
+
+//para la tarjeta del usuario:
+.user-card {
+  background: linear-gradient(135deg, #6A0DAD, #9b30d9);
+  border-radius: 0 0 24px 24px;
+  padding: 32px 24px 28px;
+  text-align: center;
+  color: white;
+  margin-bottom: 16px;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+
+  ion-icon {
+    font-size: 40px;
+    color: white;
+  }
+}
+
+.username {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: white;
+}
+
+.email {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0 0 16px;
+}
+
+.btn-edit {
+  --border-color: rgba(255, 255, 255, 0.6);
+  --color: white;
+  --border-radius: 20px;
+  font-size: 13px;
+}
+
+//para las estadísticas:
+.stats-row {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+
+.stat-box {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 14px 8px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+
+  .stat-number {
+    display: block;
+    font-size: 22px;
+    font-weight: 700;
+    color: #FFA500;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 11px;
+    color: #888;
+    margin-top: 4px;
+  }
+}
+
+//para las secciones:
+.section {
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+
+.menu-item {
+  --background: white;
+  --border-radius: 12px;
+  --padding-start: 16px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+
+  h3 {
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  p {
+    font-size: 12px;
+    color: #888;
+  }
+}
+
+.menu-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #6A0DAD;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+
+  ion-icon {
+    color: white;
+    font-size: 18px;
+  }
+}
+
+.lista-item {
+  --padding-start: 16px;
+
+  .lista-icon {
+    color: #FFA500;
+    font-size: 20px;
+    margin-right: 12px;
+  }
+}
+
+// ----btn de cerrar sesión: ----
+.btn-logout {
+  --border-color: #FFA500;
+  --color: #FFA500;
+  --border-radius: 12px;
+  margin-top: 8px;
+}

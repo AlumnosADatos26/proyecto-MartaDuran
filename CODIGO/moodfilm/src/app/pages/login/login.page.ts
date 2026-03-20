@@ -36,6 +36,8 @@ export class LoginPage {
     }).subscribe({
       next: (res) => {
         this.auth.saveToken(res.token);
+          this.auth.saveUserId(res.userId);
+          this.auth.saveUserInfo(res.username, res.email);
         this.router.navigate(['/tabs/discover']);
       },
       error: (err) => {

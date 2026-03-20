@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, AlertController } from '@ionic/angular';  // ← añadido AlertController
 import { MovieService } from 'src/app/services/MovieService';
 import { environment } from 'src/environments/environment';
 import { NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, playCircleOutline } from 'ionicons/icons';
+import { ListaService } from 'src/app/services/ListaService';   // ← añadido
+import { AuthService } from 'src/app/services/authService';     // ← añadido
 
 
 @Component({
@@ -29,7 +31,10 @@ export class MovieDetailsPage implements OnInit {
     private route: ActivatedRoute,  // para leer el id desde la url
     private router: Router,         // para poder navegar
     private movieService: MovieService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private listaService: ListaService,   // ← añadido
+    private auth: AuthService,            // ← añadido
+    private alertCtrl: AlertController   // ← añadido
   ) {
     addIcons({
       arrowBackOutline,
@@ -65,10 +70,10 @@ export class MovieDetailsPage implements OnInit {
       this.movie = await this.movieService.getMovieDetails(id);
       await this.loadTrailer(id);
 
-    } 
+    }
     catch (error) {
       console.error('Error al cargar detalles', error);
-    } 
+    }
     finally {
       this.loading = false;
     }
@@ -91,9 +96,80 @@ export class MovieDetailsPage implements OnInit {
     { user: 'Luis', text: 'Buena película, la recomiendo.' }
   ];
 
-  addToList(movie: any) {
-    // Llamada al servicio: movieService.addToList(movie.id)
-    console.log('Añadir a lista:', movie.title);
+  //muestra un selector con las listas del usuario:
+  async addToList(movie: any) {
+
+    //si el usuario no está logueado, le avisamos
+    const userId = this.auth.getUserId();
+    if (!userId) {
+      const alert = await this.alertCtrl.create({
+        header: 'Inicia sesión',
+        message: 'Debes iniciar sesión para guardar películas en tus listas.',
+        buttons: ['OK']
+      });
+      await alert.present();
+      return;
+    }
+
+    //cargamos las listas del usuario actual
+    const listas = await this.listaService.getListas(userId);
+
+    // Creamoslas opciones del selector, una por cada lista
+    const inputs: any[] = [];
+    for (const lista of listas) {
+      inputs.push({
+        type: 'radio',
+        label: lista.nombre,
+        value: lista.id
+      });
+    }
+
+    //mostramos el alert con las listas para que el usuario elija
+    const alert = await this.alertCtrl.create({
+      header: '¿A qué lista añadir?',
+      inputs: inputs,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Añadir',
+          handler: async (listaId) => {
+
+            if (!listaId) return;
+
+            try {
+              //itentamos guardar la peli
+              await this.listaService.addPelicula(listaId, {
+                tmdbId: movie.id,
+                titulo: movie.title,
+                posterPath: movie.poster_path
+              });
+
+              //si va bien, confirmamos
+              const ok = await this.alertCtrl.create({
+                header: '¡Añadida!',
+                message: `"${movie.title}" se añadió a tu lista.`,
+                buttons: ['OK']
+              });
+              await ok.present();
+
+            } catch (error) {
+              //si  ya existe, avisamos
+              const aviso = await this.alertCtrl.create({
+                header: 'Ya está en la lista',
+                message: 'Esta película ya la tienes en esa lista.',
+                buttons: ['OK']
+              });
+              await aviso.present();
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   openCommentModal(movie: any) {
@@ -118,5 +194,3 @@ export class MovieDetailsPage implements OnInit {
   }
 
 }
-
-

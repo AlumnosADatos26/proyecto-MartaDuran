@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="goBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ nombreLista }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Cargando -->
+  <div *ngIf="loading" class="loading-text">
+    Cargando películas...
+  </div>
+
+  <!-- Sin pelis -->
+  <div *ngIf="!loading && peliculas.length === 0">
+    <p>Esta lista está vacía. ¡Añade películas desde su ficha!</p>
+  </div>
+
+  <ion-card button class="movie-card" *ngFor="let peli of peliculas">
+    <div class="poster-container" (click)="verFicha(peli)">
+      <img [src]="getPosterUrl(peli.posterPath)" [alt]="peli.titulo">
+    </div>
+    <ion-card-header (click)="verFicha(peli)">
+      <ion-card-title>{{ peli.titulo }}</ion-card-title>
+    </ion-card-header>
+
+    <!-- Btn eliminar -->
+    <ion-card-content>
+      <ion-button expand="block" fill="outline" color="danger" size="small" (click)="eliminarPelicula(peli)">
+        <ion-icon name="trash-outline" slot="start"></ion-icon>
+        Quitar de la lista
+      </ion-button>
+    </ion-card-content>
+
+  </ion-card>
+</ion-content>
