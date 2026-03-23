@@ -1,0 +1,23 @@
+.movie-card {
+  margin: 4px;
+
+  img {
+    width: 100%;
+    aspect-ratio: 2/3;    // proporción de póster de película
+    object-fit: cover;
+  }
+}
+
+ion-card-title {
+  font-size: 13px;
+  white-space: normal;
+  overflow-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+ion-col {
+  padding: 4px;
+}

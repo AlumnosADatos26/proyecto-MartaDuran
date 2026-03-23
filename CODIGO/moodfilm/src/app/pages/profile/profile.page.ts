@@ -5,6 +5,8 @@ import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/authService';
 import { ListaService } from 'src/app/services/ListaService';
+import { addIcons } from 'ionicons';
+import { personOutline, bookmarkOutline, filmOutline, chevronForwardOutline, logOutOutline, heart, checkmarkCircle, time } from 'ionicons/icons';
 
 @Component({
   selector: 'app-profile',
@@ -32,7 +34,12 @@ export class ProfilePage implements OnInit {
     private auth: AuthService,
     private listaService: ListaService,
     private router: Router
-  ) { }
+  ) {
+    addIcons({
+      personOutline, bookmarkOutline, filmOutline, chevronForwardOutline,
+      logOutOutline, heart, checkmarkCircle, time
+    });
+  }
 
   ngOnInit() {
     this.cargarPerfil();
@@ -75,7 +82,7 @@ export class ProfilePage implements OnInit {
         }
       }
 
-    } 
+    }
     catch (error) {
       console.error('Error al cargar perfil:', error);
     }

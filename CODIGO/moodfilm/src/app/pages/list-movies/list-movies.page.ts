@@ -5,7 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { ListaService } from 'src/app/services/ListaService';
 import { environment } from 'src/environments/environment';
-import { AlertController } from '@ionic/angular/standalone';
+import { AlertController, ToastController } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { arrowBackOutline, trashOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-list-movies',
@@ -31,8 +33,11 @@ export class ListMoviesPage implements OnInit {
     private router: Router,
     private navCtrl: NavController,
     private listaService: ListaService,
-    private alertCtrl: AlertController 
-  ) { }
+    private alertCtrl: AlertController,
+    private toastCtrl: ToastController
+  ) {
+     addIcons({ arrowBackOutline, trashOutline });
+   }
 
   ngOnInit() {
     //recogemos el id y nombre de la lista desde los queryParams
@@ -74,7 +79,6 @@ export class ListMoviesPage implements OnInit {
 
   async eliminarPelicula(peli: any) {
 
-  //pedimos confirmación antes de eliminar
   const alert = await this.alertCtrl.create({
     header: '¿Quitar película?',
     message: `¿Seguro que quieres quitar "${peli.titulo}" de esta lista?`,
@@ -87,8 +91,17 @@ export class ListMoviesPage implements OnInit {
         text: 'Quitar',
         handler: async () => {
           await this.listaService.deletePelicula(this.listaId, peli.id);
-          // Recargamos la lista para que desaparezca
           await this.cargarPeliculas();
+
+          setTimeout(async () => {  // para esperarun poco para que el alert se cierre antes del toast
+            const toast = await this.toastCtrl.create({
+              message: `"${peli.titulo}" eliminada de la lista`,
+              duration: 2000,
+              position: 'bottom',
+              color: 'danger'
+            });
+            await toast.present();
+          }, 400); 
         }
       }
     ]
@@ -96,8 +109,6 @@ export class ListMoviesPage implements OnInit {
 
   await alert.present();
 }
-
-
 
 
 }

@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonicModule, AlertController } from '@ionic/angular';  // ← añadido AlertController
+import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { MovieService } from 'src/app/services/MovieService';
 import { environment } from 'src/environments/environment';
 import { NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, playCircleOutline } from 'ionicons/icons';
-import { ListaService } from 'src/app/services/ListaService';   // ← añadido
-import { AuthService } from 'src/app/services/authService';     // ← añadido
+import { ListaService } from 'src/app/services/ListaService';
+import { AuthService } from 'src/app/services/authService';
 
 
 @Component({
@@ -32,9 +32,10 @@ export class MovieDetailsPage implements OnInit {
     private router: Router,         // para poder navegar
     private movieService: MovieService,
     private navCtrl: NavController,
-    private listaService: ListaService,   // ← añadido
-    private auth: AuthService,            // ← añadido
-    private alertCtrl: AlertController   // ← añadido
+    private listaService: ListaService,
+    private auth: AuthService,
+    private alertCtrl: AlertController,
+    private toastCtrl: ToastController
   ) {
     addIcons({
       arrowBackOutline,
@@ -46,7 +47,6 @@ export class MovieDetailsPage implements OnInit {
   ngOnInit() {
     // obtenermos el id de la peli desde los queryParams
     const id = this.route.snapshot.queryParamMap.get('id');
-
     if (id) {
       this.loadMovieDetails(+id);
     } else {
@@ -55,6 +55,7 @@ export class MovieDetailsPage implements OnInit {
       this.router.navigate(['/discover']);
     }
   }
+
 
   getPosterUrl(posterPath: string | null): string {
     if (!posterPath) {
@@ -69,7 +70,6 @@ export class MovieDetailsPage implements OnInit {
       this.loading = true;
       this.movie = await this.movieService.getMovieDetails(id);
       await this.loadTrailer(id);
-
     }
     catch (error) {
       console.error('Error al cargar detalles', error);
@@ -96,12 +96,12 @@ export class MovieDetailsPage implements OnInit {
     { user: 'Luis', text: 'Buena película, la recomiendo.' }
   ];
 
-  //muestra un selector con las listas del usuario:
   async addToList(movie: any) {
-
-    //si el usuario no está logueado, le avisamos
+    // lo bloqueamos tanto si es invitado como si no esta logueado
     const userId = this.auth.getUserId();
-    if (!userId) {
+    const esInvitado = this.auth.isGuest();
+
+    if (!userId || esInvitado) {
       const alert = await this.alertCtrl.create({
         header: 'Inicia sesión',
         message: 'Debes iniciar sesión para guardar películas en tus listas.',
@@ -110,7 +110,6 @@ export class MovieDetailsPage implements OnInit {
       await alert.present();
       return;
     }
-
     //cargamos las listas del usuario actual
     const listas = await this.listaService.getListas(userId);
 
@@ -147,22 +146,28 @@ export class MovieDetailsPage implements OnInit {
                 posterPath: movie.poster_path
               });
 
-              //si va bien, confirmamos
-              const ok = await this.alertCtrl.create({
-                header: '¡Añadida!',
-                message: `"${movie.title}" se añadió a tu lista.`,
-                buttons: ['OK']
-              });
-              await ok.present();
+              // si va bien, confirmamos
+              setTimeout(async () => {
+                const toast = await this.toastCtrl.create({
+                  message: `"${movie.title}" añadida a tu lista`,
+                  duration: 2500,
+                  position: 'bottom',
+                  color: 'success'
+                });
+                await toast.present();
+              }, 400);
 
             } catch (error) {
-              //si  ya existe, avisamos
-              const aviso = await this.alertCtrl.create({
-                header: 'Ya está en la lista',
-                message: 'Esta película ya la tienes en esa lista.',
-                buttons: ['OK']
-              });
-              await aviso.present();
+              // si ya existe, avisamos
+              setTimeout(async () => {
+                const toast = await this.toastCtrl.create({
+                  message: 'Esta película ya está en esa lista',
+                  duration: 2500,
+                  position: 'bottom',
+                  color: 'warning'
+                });
+                await toast.present();
+              }, 400);
             }
           }
         }

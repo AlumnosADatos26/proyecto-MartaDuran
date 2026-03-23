@@ -130,10 +130,59 @@
   }
 }
 
-// ----btn de cerrar sesión: ----
+//btn de cerrar sesion: 
 .btn-logout {
   --border-color: #FFA500;
   --color: #FFA500;
   --border-radius: 12px;
   margin-top: 8px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 12px 0;
+}
+
+//cada lista tiene su color
+ion-col:nth-child(1) .lista-icon { color: #e91e8c; } // Favoritas en rosa
+ion-col:nth-child(2) .lista-icon { color: #FFA500; } // Por ver en naranja
+ion-col:nth-child(3) .lista-icon { color: #4CAF50; } // Vistas en verde
+
+.lista-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px 8px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(106, 13, 173, 0.12);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  border: 2px solid transparent;
+  min-height: 100px;        
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  &:active {
+    transform: scale(0.94);
+    box-shadow: 0 2px 6px rgba(106, 13, 173, 0.2);
+    border-color: #6A0DAD;
+  }
+}
+
+.lista-icon {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.lista-nombre {
+  font-size: 13px;          
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+  word-break: break-word;   
+  text-align: center;
 }

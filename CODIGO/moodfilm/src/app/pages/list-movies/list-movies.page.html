@@ -21,21 +21,34 @@
     <p>Esta lista está vacía. ¡Añade películas desde su ficha!</p>
   </div>
 
-  <ion-card button class="movie-card" *ngFor="let peli of peliculas">
-    <div class="poster-container" (click)="verFicha(peli)">
-      <img [src]="getPosterUrl(peli.posterPath)" [alt]="peli.titulo">
-    </div>
-    <ion-card-header (click)="verFicha(peli)">
-      <ion-card-title>{{ peli.titulo }}</ion-card-title>
-    </ion-card-header>
+ <!-- cuando hay pelis -->
+<ion-grid *ngIf="!loading && peliculas.length > 0">
+  <ion-row>
+    <ion-col 
+      size="12"        
+      size-sm="6"      
+      size-md="4"      
+      size-lg="3"      
+      *ngFor="let peli of peliculas">
 
-    <!-- Btn eliminar -->
-    <ion-card-content>
-      <ion-button expand="block" fill="outline" color="danger" size="small" (click)="eliminarPelicula(peli)">
-        <ion-icon name="trash-outline" slot="start"></ion-icon>
-        Quitar de la lista
-      </ion-button>
-    </ion-card-content>
+      <ion-card class="movie-card">
+        <div class="poster-container" (click)="verFicha(peli)">
+          <img [src]="getPosterUrl(peli.posterPath)" [alt]="peli.titulo">
+        </div>
+        <ion-card-header (click)="verFicha(peli)">
+          <ion-card-title>{{ peli.titulo }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-button expand="block" fill="outline" color="danger" 
+                      size="small" (click)="eliminarPelicula(peli)">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Quitar
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
 
-  </ion-card>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+
 </ion-content>

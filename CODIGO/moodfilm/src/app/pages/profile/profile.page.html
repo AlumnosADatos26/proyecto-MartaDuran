@@ -62,13 +62,28 @@
       </ion-label>
       <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
     </ion-item>
+    <p></p>
 
-    <!--una  fila por cada lista-->
-    <ion-item *ngFor="let lista of listas" button (click)="verLista(lista)" lines="none" class="menu-item lista-item">
-      <ion-icon name="film-outline" slot="start" class="lista-icon"></ion-icon>
-      <ion-label>{{ lista.nombre }}</ion-label>
-      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
-    </ion-item>
+    <!-- las listas en una fila agrupadas de tres en tres-->
+    <div class="section" *ngIf="!esInvitado">
+      <h3 class="section-title">Listas</h3>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" size-sm="4" *ngFor="let lista of listas">
+            <div class="lista-card" (click)="verLista(lista)">
+
+              <!-- icono diferente según el nombre de la lista -->
+              <ion-icon [name]="lista.nombre === 'Favoritas' ? 'heart' : 
+                    lista.nombre === 'Vistas' ? 'checkmark-circle' : 
+                    'time'" class="lista-icon">
+              </ion-icon>
+
+              <p class="lista-nombre">{{ lista.nombre }}</p>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
 
   </div>
 
