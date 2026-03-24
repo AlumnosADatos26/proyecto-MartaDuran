@@ -105,7 +105,8 @@ export class MovieDetailsPage implements OnInit {
       const alert = await this.alertCtrl.create({
         header: 'Inicia sesión',
         message: 'Debes iniciar sesión para guardar películas en tus listas.',
-        buttons: ['OK']
+        buttons: ['OK'],
+        cssClass: 'alert-moderno'
       });
       await alert.present();
       return;
@@ -150,28 +151,29 @@ export class MovieDetailsPage implements OnInit {
               setTimeout(async () => {
                 const toast = await this.toastCtrl.create({
                   message: `"${movie.title}" añadida a tu lista`,
-                  duration: 2500,
-                  position: 'bottom',
-                  color: 'success'
+                  duration: 2000,
+                  position: 'bottom',       
+                  cssClass: 'toast-moderno' 
                 });
                 await toast.present();
-              }, 400);
+              }, 300);
 
             } catch (error) {
               // si ya existe, avisamos
               setTimeout(async () => {
                 const toast = await this.toastCtrl.create({
                   message: 'Esta película ya está en esa lista',
-                  duration: 2500,
+                  duration: 2000,
                   position: 'bottom',
-                  color: 'warning'
+                  cssClass:'toast-moderno'
                 });
                 await toast.present();
-              }, 400);
+              }, 300);
             }
           }
         }
-      ]
+      ], 
+      cssClass: 'alert-moderno'
     });
 
     await alert.present();

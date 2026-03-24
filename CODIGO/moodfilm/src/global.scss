@@ -8,30 +8,155 @@
  * For more information on global stylesheets, visit the documentation:
  * https://ionicframework.com/docs/layout/global-stylesheets
  */
-
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
-
 /* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
-
 /* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
-
 /**
  * Ionic Dark Mode
  * -----------------------------------------------------
  * For more info, please see:
  * https://ionicframework.com/docs/theming/dark-mode
  */
-
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+
+////////////////////////
+
+//para el stilo de todos los toast:
+
+.toast-moderno {
+  // primero itamos el fondo negro
+  --background: transparent;
+  --box-shadow: none;
+  //subimos el toast
+  --margin-bottom: 20vh; 
+
+  &::part(container) {
+    // forzamos el tamaño para que no sea invisible
+    width: fit-content;
+    min-width: 150px;
+    max-width: 280px;
+    margin: 0 auto; // ylo centramos horizontalmente
+
+
+    background: rgba(19, 18, 18, 0.678); 
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    
+    border-radius: 50px; 
+    padding: 10px 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  &::part(message) {
+    // 5. Letras blancas que resaltan
+    color: #ffffff !important; 
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    letter-spacing: 0.3px;
+  }
+}
+
+
+//////////////////////
+
+
+//para el estilo de todos los alerts:
+
+.ios.alert-moderno, .md.alert-moderno {
+  //fondo de la pantalla 
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.5);
+
+  &::part(wrapper) {
+    background: #ffffff !important; 
+    border-radius: 25px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    overflow: hidden !important;
+    border: none !important;
+  }
+
+  // HEADER: de color sólido 
+  .alert-head {
+    padding: 30px 20px !important;
+    background: #7a22e0 !important; 
+    text-align: center !important;
+
+   .alert-title {
+    color: #ffffff !important;
+     font-size: 1.2rem !important;
+      font-weight: 800 !important;
+      text-transform: uppercase !important;
+    }
+  }
+
+  //el texto será oscuro sobre fondo blanco 
+  .alert-message {
+    color: #2c3e50 !important;
+    padding: 20px 25px !important;
+    text-align: center !important;
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+  }
+
+  // selector de listas:
+  .alert-radio-group {
+    border: none !important;
+  }
+  .alert-radio-button {
+    --inner-border-width: 0 !important;
+    border: none !important;
+    .alert-radio-label {
+      color: #333 !important;
+      font-weight: 600 !important;
+    }
+  }
+  //botones: 
+  .alert-button-group {
+    padding: 10px 20px 25px 20px !important;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 15px !important;
+  }
+
+  button.alert-button {
+    min-width: 110px !important;
+    height: 45px !important;
+    border-radius: 22px !important;
+    margin: 0 !important;
+    text-transform: uppercase !important;
+    font-size: 0.85rem !important;
+
+    //estilo letra del btn
+    .alert-button-inner {
+      justify-content: center !important;
+      font-weight: 700 !important;
+    }
+
+    // btn cancelar
+    &:first-child {
+      background: #f0f0f5 !important;
+      color: #7a22e0 !important;
+    }
+    // btn aceptar
+    &:last-child {
+      background: #7a22e0 !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 12px rgba(122, 34, 224, 0.3) !important;
+    }
+  }
+}

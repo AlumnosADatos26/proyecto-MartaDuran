@@ -36,8 +36,8 @@ export class ListMoviesPage implements OnInit {
     private alertCtrl: AlertController,
     private toastCtrl: ToastController
   ) {
-     addIcons({ arrowBackOutline, trashOutline });
-   }
+    addIcons({ arrowBackOutline, trashOutline });
+  }
 
   ngOnInit() {
     //recogemos el id y nombre de la lista desde los queryParams
@@ -79,36 +79,37 @@ export class ListMoviesPage implements OnInit {
 
   async eliminarPelicula(peli: any) {
 
-  const alert = await this.alertCtrl.create({
-    header: '¿Quitar película?',
-    message: `¿Seguro que quieres quitar "${peli.titulo}" de esta lista?`,
-    buttons: [
-      {
-        text: 'Cancelar',
-        role: 'cancel'
-      },
-      {
-        text: 'Quitar',
-        handler: async () => {
-          await this.listaService.deletePelicula(this.listaId, peli.id);
-          await this.cargarPeliculas();
+    const alert = await this.alertCtrl.create({
+      header: '¿Quitar película?',
+      message: `¿Seguro que quieres quitar "${peli.titulo}" de esta lista?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Quitar',
+          handler: async () => {
+            await this.listaService.deletePelicula(this.listaId, peli.id);
+            await this.cargarPeliculas();
 
-          setTimeout(async () => {  // para esperarun poco para que el alert se cierre antes del toast
-            const toast = await this.toastCtrl.create({
-              message: `"${peli.titulo}" eliminada de la lista`,
-              duration: 2000,
-              position: 'bottom',
-              color: 'danger'
-            });
-            await toast.present();
-          }, 400); 
+            setTimeout(async () => {  // para esperarun poco para que el alert se cierre antes del toast
+              const toast = await this.toastCtrl.create({
+                message: `"${peli.titulo}" eliminada de la lista`,
+                duration: 2000,
+                position: 'bottom',
+                cssClass: 'toast-moderno'
+              });
+              await toast.present();
+            }, 400);
+          }
         }
-      }
-    ]
-  });
+      ], 
+      cssClass: 'alert-moderno'
+    });
 
-  await alert.present();
-}
+    await alert.present();
+  }
 
 
 }
