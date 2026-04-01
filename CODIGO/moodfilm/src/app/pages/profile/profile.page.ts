@@ -6,14 +6,17 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/authService';
 import { ListaService } from 'src/app/services/ListaService';
 import { addIcons } from 'ionicons';
-import { personOutline, bookmarkOutline, filmOutline, chevronForwardOutline, logOutOutline, heart, checkmarkCircle, time } from 'ionicons/icons';
+import { personOutline, bookmarkOutline, filmOutline, chevronForwardOutline, logOutOutline, heart, checkmarkCircle, time, globeOutline, chevronDownOutline } from 'ionicons/icons';
+import { ComentarioService } from 'src/app/services/ComentarioService';
+import { environment } from 'src/environments/environment';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, DatePipe]
 })
 
 export class ProfilePage implements OnInit {
@@ -29,15 +32,19 @@ export class ProfilePage implements OnInit {
   totalListas = 0;
   //controlamos si es invitado
   esInvitado = false;
+  //para los comentarios del usuario:
+  misComentarios: any[] = [];
+  mostrarComentarios: boolean = false; 
 
   constructor(
     private auth: AuthService,
     private listaService: ListaService,
-    private router: Router
+    private router: Router,
+    private comentarioService: ComentarioService,
   ) {
     addIcons({
       personOutline, bookmarkOutline, filmOutline, chevronForwardOutline,
-      logOutOutline, heart, checkmarkCircle, time
+      logOutOutline, heart, checkmarkCircle, time, globeOutline, chevronDownOutline
     });
   }
 
@@ -82,6 +89,8 @@ export class ProfilePage implements OnInit {
         }
       }
 
+      this.misComentarios = await this.comentarioService.getComentariosPorUsuario(userId);
+
     }
     catch (error) {
       console.error('Error al cargar perfil:', error);
@@ -101,6 +110,10 @@ export class ProfilePage implements OnInit {
   logout() {
     this.auth.logout();
     this.router.navigate(['/login']);
+  }
+
+  irAPelicula(tmdbId: number) {
+    this.router.navigate(['/movie-details'], { queryParams: { id: tmdbId } });
   }
 
 }

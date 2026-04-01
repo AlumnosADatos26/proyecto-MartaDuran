@@ -87,6 +87,53 @@
 
   </div>
 
+<div class="section" *ngIf="!esInvitado">
+
+  <ion-item button (click)="mostrarComentarios = !mostrarComentarios" lines="none" class="menu-item">
+    <div class="menu-icon-box" slot="start">
+      <ion-icon name="chatbubbles-outline"></ion-icon>
+    </div>
+    <ion-label>
+      <h3>Mis comentarios</h3>
+      <p>{{ misComentarios.length }} comentarios</p>
+    </ion-label>
+    <ion-icon [name]="mostrarComentarios ? 'chevron-down-outline' : 'chevron-forward-outline'" slot="end"></ion-icon>
+  </ion-item>
+
+  <div *ngIf="mostrarComentarios">
+
+    <div *ngIf="misComentarios.length === 0" class="no-comments">
+      <ion-icon name="chatbubbles-outline"></ion-icon>
+      <p>Aún no has comentado ninguna película</p>
+    </div>
+
+    <div *ngFor="let c of misComentarios" class="comentario-card ion-activatable" (click)="irAPelicula(c.tmdbId)">
+      <ion-ripple-effect></ion-ripple-effect>
+
+      <div class="comentario-avatar">
+        <img *ngIf="c.fotoPerfil" [src]="c.fotoPerfil" class="avatar-img">
+        <div *ngIf="!c.fotoPerfil" class="avatar-placeholder">
+          <ion-icon name="person-circle-outline"></ion-icon>
+        </div>
+      </div>
+
+      <div class="comentario-info">
+        <div class="header-comentario">
+          <h4 class="comentario-titulo">{{ c.tituloPelicula }}</h4>
+          <span class="badge-privacidad" [class.is-private]="!c.esPublico">
+            <ion-icon [name]="c.esPublico ? 'globe-outline' : 'lock-closed-outline'"></ion-icon>
+          </span>
+        </div>
+        
+        <p class="comentario-texto">"{{ c.texto }}"</p>
+        
+        <div class="comentario-footer">
+          <span class="comentario-fecha">{{ c.fecha | date:'d MMM yyyy':'':'es' }}</span>
+        </div>
+      </div>
+    </div> </div>
+</div>
+
   <!--bton de cerrar sesión-->
   <div class="section">
     <ion-button expand="block" fill="outline" color="warning" class="btn-logout" (click)="logout()">

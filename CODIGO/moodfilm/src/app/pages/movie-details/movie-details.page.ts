@@ -6,198 +6,183 @@ import { MovieService } from 'src/app/services/MovieService';
 import { environment } from 'src/environments/environment';
 import { NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { arrowBackOutline, playCircleOutline } from 'ionicons/icons';
+import { arrowBackOutline, playCircleOutline, personCircleOutline, lockClosedOutline, chatbubblesOutline, 
+          sendOutline, globeOutline, chatbubbleEllipsesOutline } from 'ionicons/icons';
 import { ListaService } from 'src/app/services/ListaService';
 import { AuthService } from 'src/app/services/authService';
-
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-movie-details',
   templateUrl: './movie-details.page.html',
   styleUrls: ['./movie-details.page.scss'],
   standalone: true,
-  // al ser standalone importamos todo lo que use el html
-  imports: [IonicModule, CommonModule, DatePipe]
+  imports: [IonicModule, CommonModule, DatePipe, FormsModule]
 })
-
 export class MovieDetailsPage implements OnInit {
 
-  movie: any;                                         // peli seleccionada
-  loading = true;                                     // controla el estado de carga
-  readonly IMAGE_BASE_URL = environment.tmdbImageUrl;   //obtenemos la url de las imágenes desde enviroment
-  trailerKey: string | null = null; // guardamos id de youtube
+  movie: any;
+  loading = true;
+  readonly IMAGE_BASE_URL = environment.tmdbImageUrl;
+  trailerKey: string | null = null;
+  esPublico: boolean = true;
 
   constructor(
-    private route: ActivatedRoute,  // para leer el id desde la url
-    private router: Router,         // para poder navegar
-    private movieService: MovieService,
+    private route: ActivatedRoute,
+    private router: Router,
+    public movieService: MovieService,
     private navCtrl: NavController,
     private listaService: ListaService,
-    private auth: AuthService,
+    public auth: AuthService,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController
   ) {
     addIcons({
-      arrowBackOutline,
-      playCircleOutline
+      arrowBackOutline, playCircleOutline, personCircleOutline,
+      lockClosedOutline, chatbubblesOutline, sendOutline,
+      globeOutline, chatbubbleEllipsesOutline
     });
-
   }
 
   ngOnInit() {
-    // obtenermos el id de la peli desde los queryParams
     const id = this.route.snapshot.queryParamMap.get('id');
     if (id) {
       this.loadMovieDetails(+id);
     } else {
-      // Si no llega el id, volvemos a la pagina discover
       console.error('No se recibió ID de película');
       this.router.navigate(['/discover']);
     }
   }
 
-
   getPosterUrl(posterPath: string | null): string {
-    if (!posterPath) {
-      return 'assets/img/no-poster.png'; // fallback
-    }
+    if (!posterPath) return 'assets/img/no-poster.png';
     return `${this.IMAGE_BASE_URL}${posterPath}`;
   }
 
-  //cargamos los detalles completos de la película usando async y await 
   async loadMovieDetails(id: number) {
     try {
       this.loading = true;
       this.movie = await this.movieService.getMovieDetails(id);
       await this.loadTrailer(id);
-    }
-    catch (error) {
+      await this.movieService.cargarComentarios(id);
+    } catch (error) {
       console.error('Error al cargar detalles', error);
-    }
-    finally {
+    } finally {
       this.loading = false;
     }
   }
 
-
-  //Devuelve los géneros en formato texto:
-  /*Si movie existe y movie.genres también, sigue adelante.
-  Si no, devuelve undefined. Rrecorre el array y solo coge el nombre de cada género.
-  ?? '' es el valor por defecto: si no hay géneros, devuelve cadena vacía '' */
   get genresText(): string {
     return this.movie?.genres?.map((g: { id: number; name: string }) => g.name).join(', ') ?? '';
   }
 
+  get estaLogueado(): boolean {
+    return !this.auth.isGuest() && this.auth.getUserId() !== null;
+  }
 
-  //métodos provisionales, solo para probar mientras no tengamos la api ni la BD
-  //datos de prueba:
-  comments = [
-    { user: 'Ana', text: '¡Me encantó!' },
-    { user: 'Luis', text: 'Buena película, la recomiendo.' }
-  ];
-
+  // Validación de autoría
+  esAutor(comentarioUsuarioId: any): boolean {
+    const userId = this.auth.getUserId();
+    if (!this.estaLogueado || !userId) return false;
+    return Number(comentarioUsuarioId) === Number(userId);
+  }
   async addToList(movie: any) {
-    // lo bloqueamos tanto si es invitado como si no esta logueado
     const userId = this.auth.getUserId();
     const esInvitado = this.auth.isGuest();
-
     if (!userId || esInvitado) {
       const alert = await this.alertCtrl.create({
         header: 'Inicia sesión',
         message: 'Debes iniciar sesión para guardar películas en tus listas.',
-        buttons: ['OK'],
-        cssClass: 'alert-moderno'
+        buttons: ['OK'], cssClass: 'alert-moderno'
       });
       await alert.present();
       return;
     }
-    //cargamos las listas del usuario actual
     const listas = await this.listaService.getListas(userId);
-
-    // Creamoslas opciones del selector, una por cada lista
     const inputs: any[] = [];
     for (const lista of listas) {
-      inputs.push({
-        type: 'radio',
-        label: lista.nombre,
-        value: lista.id
-      });
+      inputs.push({ type: 'radio', label: lista.nombre, value: lista.id });
     }
-
-    //mostramos el alert con las listas para que el usuario elija
     const alert = await this.alertCtrl.create({
       header: '¿A qué lista añadir?',
-      inputs: inputs,
+      inputs,
       buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
+        { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Añadir',
           handler: async (listaId) => {
-
             if (!listaId) return;
-
             try {
-              //itentamos guardar la peli
               await this.listaService.addPelicula(listaId, {
-                tmdbId: movie.id,
-                titulo: movie.title,
-                posterPath: movie.poster_path
+                tmdbId: movie.id, titulo: movie.title, posterPath: movie.poster_path
               });
-
-              // si va bien, confirmamos
               setTimeout(async () => {
                 const toast = await this.toastCtrl.create({
                   message: `"${movie.title}" añadida a tu lista`,
-                  duration: 2000,
-                  position: 'bottom',       
-                  cssClass: 'toast-moderno' 
+                  duration: 2000, position: 'bottom', cssClass: 'toast-moderno'
                 });
                 await toast.present();
               }, 300);
-
             } catch (error) {
-              // si ya existe, avisamos
               setTimeout(async () => {
                 const toast = await this.toastCtrl.create({
                   message: 'Esta película ya está en esa lista',
-                  duration: 2000,
-                  position: 'bottom',
-                  cssClass:'toast-moderno'
+                  duration: 2000, position: 'bottom', cssClass: 'toast-moderno'
                 });
                 await toast.present();
               }, 300);
             }
           }
         }
-      ], 
+      ],
       cssClass: 'alert-moderno'
     });
-
     await alert.present();
-  }
-
-  openCommentModal(movie: any) {
-    // Abrir modal para escribir comentario
-    console.log('Abrir modal para comentar:', movie.title);
   }
 
   async loadTrailer(id: number) {
     const video = await this.movieService.getBestTrailer(id);
-
     this.trailerKey = video ? video.key : null;
   }
+
   openTrailer() {
     if (!this.trailerKey) return;
-
-    const url = `https://www.youtube.com/watch?v=${this.trailerKey}`;
-    window.open(url, '_blank');
+    window.open(`https://www.youtube.com/watch?v=${this.trailerKey}`, '_blank');
   }
 
-  goBack() {
-    this.navCtrl.back();
+  goBack() { this.navCtrl.back(); }
+
+  irAlLogin() { this.router.navigate(['/login']); }
+
+  async enviarComentario(tmdbId: number, tituloPelicula: string) {
+    if (!this.estaLogueado) {
+      const alert = await this.alertCtrl.create({
+        header: 'Inicia sesión',
+        message: 'Debes iniciar sesión para comentar.',
+        buttons: ['OK'], cssClass: 'alert-moderno'
+      });
+      await alert.present();
+      return;
+    }
+    await this.movieService.enviarComentario(tmdbId, tituloPelicula, this.esPublico);
+    this.esPublico = true;
   }
 
+  async eliminarComentario(id: number) {
+    const alert = await this.alertCtrl.create({
+      header: '¿Eliminar comentario?',
+      message: 'Esta acción no se puede deshacer.',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          handler: async () => {
+            await this.movieService.eliminarComentario(id, this.movie.id);
+          }
+        }
+      ],
+      cssClass: 'alert-moderno'
+    });
+    await alert.present();
+  }
 }

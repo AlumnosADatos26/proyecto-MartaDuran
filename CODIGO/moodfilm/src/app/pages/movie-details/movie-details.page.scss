@@ -1,121 +1,251 @@
-/* Fondo moderno con degradado suave y sutil */
+//variables:
+$purple-dark:  #4B0082;
+$purple-light: #8A2BE2;
+$gold:         #FFD700;
+$orange:       #FFA500;
+$text:         #EEE;
+$surface:      rgba(255,255,255,0.06);
+$border:       rgba(255,255,255,0.12);
+$muted:        rgba(255,255,255,0.45);
+
+
+//la base
 ion-content {
   --background: none;
-  background: linear-gradient(135deg, #4B0082, #8A2BE2); /* morado profundo a violeta */
-  color: #fff; /* texto por defecto blanco */
-  --padding-start: 16px;
-  --padding-end: 16px;
-  --padding-top: 16px;
-  --padding-bottom: 16px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --color: #{$text};
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, $purple-dark, $purple-light);
 }
 
-/* Texto de carga centrado */
-.loading-text {
-  text-align: center;
-  margin-top: 50px;
-  color: #FFD700;
-  font-weight: bold;
-  font-size: 1.2rem;
+ion-toolbar {
+  --background: rgba(75, 0, 130, 0.85);
+  --color: #{$text};
+  backdrop-filter: blur(12px);
 }
 
-/* Contenedor principal: imagen + info */
-.movie-container {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  align-items: flex-start;
-  margin-top: 16px;
+
+//backdrop
+.backdrop-blur {
+  position: fixed; inset: 0;
+  background-size: cover; background-position: center top;
+  filter: blur(28px) brightness(0.25) saturate(1.4);
+  transform: scale(1.1);
+  z-index: 0; pointer-events: none;
+}
+.backdrop-overlay {
+  position: fixed; inset: 0;
+  background: linear-gradient(to bottom,
+    rgba(75,0,130,0.3) 0%, rgba(75,0,130,0.7) 50%, rgba(75,0,130,0.98) 100%);
+  z-index: 0; pointer-events: none;
 }
 
-/* Imagen de la película */
-.movie-image img {
-  width: 250px;
-  border-radius: 12px;
-  border: 4px solid #FFD700; /* borde dorado para resaltar */
-  object-fit: cover;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+//layout
+.page-content {
+  position: relative; z-index: 1;
+  padding: 24px 20px 60px;
+  max-width: 900px; margin: 0 auto;
 }
 
-/* Información de la película */
-.movie-info {
-  flex: 1;
+.hero-section {
+  display: flex; gap: 28px; align-items: flex-start;
+  margin-bottom: 40px;
+  @media (max-width: 600px) { flex-direction: column; align-items: center; }
 }
 
-.movie-info h1 {
-  font-size: 2rem;
-  margin-bottom: 8px;
-  color: #FFD700;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+//poster
+.poster-wrapper {
+  flex-shrink: 0; display: flex; flex-direction: column;
+  gap: 10px; align-items: center;
+  @media (max-width: 600px) { width: 65%; }
 }
-
-.movie-info h3 {
-  font-size: 1.1rem;
-  color: #FFA500;
-  margin-bottom: 12px;
+.poster {
+  width: 200px; border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,215,0,0.3);
+  @media (max-width: 600px) { width: 100%; }
 }
-
-/* Resumen y detalles */
-.movie-overview h4,
-.movie-details strong {
-  color: #FFA500;
-}
-
-.movie-overview p,
-.movie-details p {
-  font-size: 1rem;
-  line-height: 1.5;
-  color: #EEE;
-}
-
-/* Botones de acciones: añadir a lista, comentar */
-.action-buttons {
-  display: flex;
+.trailer-btn {
+  display: flex; align-items: center; gap: 8px; width: 100%;
   justify-content: center;
-  gap: 16px;
-  margin-top: 20px;
-  flex-wrap: wrap;
+  background: transparent; border: 1.5px solid $gold; color: $gold;
+  border-radius: 24px; padding: 8px 20px; font-size: 0.85rem; cursor: pointer;
+  transition: all 0.2s;
+  ion-icon { font-size: 1.1rem; }
+  &:hover { background: $gold; color: $purple-dark; }
 }
 
-.action-buttons ion-button {
-  --background: #FFD700;  /* amarillo dorado */
-  --color: #4B0082;       /* morado profundo */
-  --border-radius: 20px;
-  font-weight: 600;
-  --padding-start: 20px;
-  --padding-end: 20px;
+//la informacion
+.hero-info { flex: 1; padding-top: 8px; }
+
+.movie-title {
+  font-size: 2rem; font-weight: 700; color: $gold;
+  line-height: 1.2; margin: 0 0 14px; letter-spacing: -0.02em;
+  @media (max-width: 600px) { font-size: 1.5rem; text-align: center; }
 }
 
-.action-buttons ion-button:hover {
-  --background: #FFA500;  /* naranja */
-  --color: #fff;
+.meta-row {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
+  @media (max-width: 600px) { justify-content: center; }
+}
+.meta-chip {
+  background: $surface; border: 1px solid $border;
+  color: rgba(255,255,255,0.6); border-radius: 6px;
+  padding: 3px 10px; font-size: 0.8rem;
+}
+.rating-chip {
+  @extend .meta-chip;
+  background: rgba(255,215,0,0.15);
+  border-color: rgba(255,215,0,0.4); color: $gold; font-weight: 600;
 }
 
-/* Responsive: móvil */
-@media (max-width: 768px) {
-  .movie-container {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+.genres { color: $orange; font-size: 0.9rem; font-style: italic; margin: 0 0 8px; }
+.original-lang {
+  color: rgba(255,255,255,0.55); font-size: 0.85rem; margin: 0 0 16px;
+  .label { color: $text; font-weight: 600; }
+}
+.overview { color: rgba(238,238,238,0.85); font-size: 0.95rem; line-height: 1.7; margin: 0 0 24px; }
+
+//btn de añadir
+.add-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: $gold; color: $purple-dark;
+  border: none; border-radius: 10px; padding: 12px 24px;
+  font-size: 0.9rem; font-weight: 700; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(255,215,0,0.3);
+  transition: all 0.2s;
+  ion-icon { font-size: 1.1rem; display: block; pointer-events: none; }
+  &:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,215,0,0.45); }
+}
+
+//comentarios
+.comments-section {
+  border-top: 1px solid $border; padding-top: 32px;
+}
+.section-title {
+  font-size: 1.1rem; font-weight: 600; color: $text;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  display: flex; align-items: center; gap: 10px; margin: 0 0 24px;
+  .count {
+    background: $purple-light; color: #fff;
+    border-radius: 12px; padding: 2px 9px; font-size: 0.75rem;
   }
-
-  .movie-image img {
-    width: 70%;
-    margin-bottom: 16px;
-  }
-
-  .action-buttons {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-.no-trailer {
-  display: block;
-  text-align: center;
-  margin-top: 8px;
-  font-size: 0.9rem;
 }
 
-
-
+.comment-composer {
+  display: flex; gap: 14px; margin-bottom: 28px;
+  background: $surface; border: 1px solid $border;
+  border-radius: 14px; padding: 16px; backdrop-filter: blur(8px);
 }
+.composer-avatar ion-icon { font-size: 2.2rem; color: rgba(255,255,255,0.4); }
+.composer-body { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+
+.comment-textarea {
+  width: 100%; background: transparent; border: none;
+  border-bottom: 1px solid $border; color: $text;
+  font-size: 0.9rem; resize: none; outline: none; padding: 4px 0; line-height: 1.6;
+  &::placeholder { color: rgba(255,255,255,0.35); }
+}
+.composer-footer { display: flex; justify-content: flex-end; }
+
+.send-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  background: $purple-light; color: #fff;
+  border: none; border-radius: 8px; padding: 8px 18px;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
+  ion-icon { font-size: 0.9rem; display: block; pointer-events: none; }
+  &:hover { background: $gold; color: $purple-dark; }
+}
+
+.guest-prompt {
+  display: flex; align-items: center; gap: 10px;
+  background: $surface; border: 1px solid $border;
+  border-radius: 10px; padding: 14px 18px;
+  color: rgba(255,255,255,0.55); font-size: 0.9rem; margin-bottom: 24px;
+  ion-icon { color: $gold; font-size: 1.1rem; }
+}
+.login-link { color: $gold; font-weight: 600; cursor: pointer; &:hover { text-decoration: underline; } }
+
+.comment-card {
+  display: flex; gap: 14px;
+  padding: 16px 0; border-bottom: 1px solid $border;
+  &:last-child { border-bottom: none; }
+}
+.avatar-img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid $purple-light; }
+.avatar-icon { font-size: 2.4rem; color: rgba(255,255,255,0.4); }
+.comment-body { flex: 1; }
+.comment-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+.comment-user { font-size: 0.9rem; color: $gold; font-weight: 700; }
+.comment-date { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+.comment-text { font-size: 0.9rem; color: rgba(238,238,238,0.85); line-height: 1.6; margin: 0; }
+
+.no-comments {
+  text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.4);
+  ion-icon { font-size: 2.5rem; display: block; margin: 0 auto 12px; opacity: 0.5; }
+  p { font-size: 0.9rem; margin: 0; }
+}
+
+//loading
+.loading-screen {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; height: 100%; gap: 16px; color: rgba(255,255,255,0.4);
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid $border; border-top-color: $gold;
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.toggle-label {
+  display: flex; align-items: center; gap: 6px;
+  color: rgba(255,255,255,0.6); font-size: 0.85rem; cursor: pointer;
+  input[type="checkbox"] { accent-color: $purple-light; width: 16px; height: 16px; cursor: pointer; }
+  ion-icon { font-size: 1rem; }
+  span { user-select: none; }
+}
+
+.privado-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 0.72rem; color: $orange;
+  background: rgba(255,165,0,0.15); border: 1px solid rgba(255,165,0,0.3);
+  border-radius: 6px; padding: 2px 7px;
+  ion-icon { font-size: 0.7rem; }
+}
+
+.comment-privado {
+  opacity: 0.75;
+  border-left: 2px solid $orange;
+  padding-left: 12px;
+}
+
+.delete-btn {
+  margin-top: 6px;
+  background: transparent; border: 1px solid rgba(255,80,80,0.4);
+  color: rgba(255,100,100,0.8); border-radius: 6px;
+  padding: 3px 10px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s;
+  &:hover { background: rgba(255,80,80,0.15); border-color: rgba(255,80,80,0.7); color: #ff6060; }
+}
+
+.publico-badge {
+  color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.15);
+}
+
+.composer-footer { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+}
+
+.toggle-label {
+  display: flex; align-items: center; gap: 8px;
+  background: $surface; border: 1px solid $border;
+  border-radius: 20px; padding: 6px 12px;
+  color: rgba(255,255,255,0.6); font-size: 0.82rem; cursor: pointer;
+  transition: all 0.2s;
+  input[type="checkbox"] { display: none; } //ocultamos el checkbox nativo
+  ion-icon { font-size: 1rem; color: $gold; }
+  span { user-select: none; }
+  &:hover { background: rgba(255,255,255,0.1); }
+}
+

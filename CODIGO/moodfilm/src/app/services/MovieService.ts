@@ -2,44 +2,49 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ComentarioService } from 'src/app/services/ComentarioService';
+import { AuthService } from './authService';
+import { ToastController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MovieService {
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private comentarioService: ComentarioService,
+    public auth: AuthService,
+    private toastCtrl: ToastController
+  ) { }
 
-  //obtenemos pelis más recientes y populares
+  comentarios: any[] = [];
+  nuevoComentario: string = '';
+  esPublico: boolean = true; 
+
   getPopularMovies(page = 1): Promise<any> {
     const url = `${environment.apiBaseUrl}/tmdb/populares?page=${page}`;
     return firstValueFrom(this.http.get(url));
   }
 
-  //obtenemos los detalles de una pelicula concreta
   getMovieDetails(id: number): Promise<any> {
     const url = `${environment.apiBaseUrl}/tmdb/${id}`;
     return firstValueFrom(this.http.get(url));
   }
 
-  // busca pelicula por titulo
   searchMovies(query: string, page = 1): Promise<any> {
     const url = `${environment.apiBaseUrl}/tmdb/buscar?query=${query}&page=${page}`;
     return firstValueFrom(this.http.get(url));
   }
 
-  //obtiene la lista de generos disponibles
   getGenres(): Promise<any> {
     const url = `${environment.apiBaseUrl}/tmdb/generos`;
     return firstValueFrom(this.http.get(url));
   }
 
-  //descubre pelis con filtros avanzados (genero, año, puntuación, idioma, etc.)
   discoverMovies(filters: any = {}): Promise<any> {
-    //cnstruimos la url manualmente para que los puntos no se codifiquen
     let queryString = '';
 
-    //recorremos cada filtro y lo añadimos a la url
     for (const key of Object.keys(filters)) {
       const value = filters[key];
       queryString += '&' + key + '=' + value;
@@ -49,32 +54,73 @@ export class MovieService {
     return firstValueFrom(this.http.get(url));
   }
 
-  //devuelve el mejor trailer disponible
   async getBestTrailer(movieId: number): Promise<any | null> {
     const url = `${environment.apiBaseUrl}/tmdb/${movieId}/videos`;
     const res: any = await firstValueFrom(this.http.get(url));
     const videos = res.results || [];
 
-    if (!videos.length) {
-      return null;
+    if (!videos.length) return null;
+
+    let trailer = videos.find((v: any) =>
+      v.site === 'YouTube' && v.type === 'Trailer' && v.iso_639_1 === 'es'
+    );
+
+    if (!trailer) {
+      trailer = videos.find((v: any) =>
+        v.site === 'YouTube' && v.type === 'Trailer' && v.iso_639_1 === 'en'
+      );
     }
 
-    //trailer en español
-    let trailer = videos.find((v: any) => v.site === 'YouTube' && v.type === 'Trailer' && v.iso_639_1 === 'es');
+    if (!trailer) {
+      trailer = videos.find((v: any) =>
+        v.site === 'YouTube' && v.type === 'Trailer'
+      );
+    }
 
-    //en ingles
-    if (!trailer) {
-      trailer = videos.find((v: any) => v.site === 'YouTube' && v.type === 'Trailer' && v.iso_639_1 === 'en');
-    }
-    //culaquiera trailer de yt
-    if (!trailer) {
-      trailer = videos.find((v: any) => v.site === 'YouTube' && v.type === 'Trailer');
-    }
-    //cualquier video de yt
     if (!trailer) {
       trailer = videos.find((v: any) => v.site === 'YouTube');
     }
 
     return trailer || null;
   }
+
+  //cargar comentarios
+async cargarComentarios(tmdbId: number) {
+    try {
+        //el backend ya devuelve solo lo que debe ver este usuario
+        this.comentarios = await this.comentarioService.getComentariosPorPeli(tmdbId);
+    } 
+    catch (error) {
+        console.error('Error al cargar comentarios', error);
+    }
+}
+
+  //enviar comentario
+  async enviarComentario(tmdbId: number, tituloPelicula: string, esPublico: boolean) {
+    if (!this.nuevoComentario.trim()) return;
+
+    try {
+      await this.comentarioService.guardarComentario(this.nuevoComentario, tmdbId, tituloPelicula, esPublico);
+      this.nuevoComentario = '';
+      await this.cargarComentarios(tmdbId);
+
+    } 
+    catch (error) {
+      const toast = await this.toastCtrl.create({
+        message: 'Error al comentar',
+        duration: 2000,
+        position: 'bottom'
+      });
+      await toast.present();
+    }
+  }
+
+
+  //eliminar comentario
+  async eliminarComentario(id: number, tmdbId: number) {
+    await this.comentarioService.eliminarComentario(id);
+    await this.cargarComentarios(tmdbId);
+  }
+
+
 }

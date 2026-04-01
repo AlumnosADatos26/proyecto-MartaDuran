@@ -186,3 +186,96 @@ ion-col:nth-child(3) .lista-icon { color: #4CAF50; } // Vistas en verde
   word-break: break-word;   
   text-align: center;
 }
+
+.comentario-card {
+  position: relative;
+  overflow: hidden; //Para el efecto ripple
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  margin: 12px 0;
+  background: white; //blanco para que resalte sobre el fondo gris
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  align-items: flex-start;
+
+  .comentario-avatar {
+    flex-shrink: 0; 
+    width: 44px;
+    height: 44px;
+
+    .avatar-img, .avatar-placeholder {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px; //cuadrado redondeado 
+      object-fit: cover;
+    }
+
+    .avatar-placeholder {
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      ion-icon { font-size: 28px; color: #ccc; }
+    }
+  }
+
+  .comentario-info {
+    flex: 1;
+
+    .header-comentario {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .comentario-titulo {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0;
+    }
+    .comentario-texto {
+      font-size: 0.9rem;
+      color: #444;
+      font-style: italic;
+      line-height: 1.4;
+      margin: 8px 0;
+    }
+    .comentario-footer {
+      .comentario-fecha {
+        font-size: 0.75rem;
+        color: #999;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+//badge de privacidad 
+.badge-privacidad {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  border-radius: 20px;
+  background: rgba(106, 13, 173, 0.1);
+  color: #6A0DAD;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  &.is-private {
+    background: #f5f5f5;
+    color: #888;
+  }
+}
+
+.comentario-card {
+  border-left: 5px solid #6A0DAD; 
+  background: white;
+  transition: transform 0.2s;
+  // Colores alternos usando nth-child
+  &:nth-child(odd) { border-left-color: #FFA500; } //nranja para los impares
+  &:nth-child(3n) { border-left-color: #e91e8c; }  //rosa cada tres
+}

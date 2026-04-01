@@ -5,65 +5,126 @@
         <ion-icon name="arrow-back-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-
     <ion-title>{{ movie?.title }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-
 <ng-container *ngIf="movie; else loadingTemplate">
-  <ion-content class="ion-padding">
-    <div class="movie-container">
-      <div class="movie-image">
-        <img [src]="getPosterUrl(movie.poster_path)" alt="{{ movie.title }}">
-        <ion-button expand="block" fill="outline" color="warning" *ngIf="trailerKey" (click)="openTrailer()">
-          <ion-icon name="play-circle-outline" slot="start"></ion-icon>
-          trailer
-        </ion-button>
-      </div>
+  <ion-content>
 
-      <div class="movie-info">
-        <h1>{{ movie.title }}</h1>
-        <h3>{{ movie.release_date | date:'longDate':'':'es' }} | ⭐ {{ movie.vote_average?.toFixed(1) }}</h3>
+    <div class="backdrop-blur"
+      [style.backgroundImage]="'url(' + getPosterUrl(movie.backdrop_path || movie.poster_path) + ')'">
+    </div>
+    <div class="backdrop-overlay"></div>
 
-        <section class="movie-overview">
-          <h4>Resumen</h4>
-          <p>{{ movie.overview }}</p>
-        </section>
+    <div class="page-content">
 
-        <section class="movie-details">
-          <p><strong>Idioma original:</strong> {{ movie.original_language?.toUpperCase() }}</p>
-          <p><strong>Duración:</strong> {{ movie.runtime }} minutos</p>
-          <p><strong>Géneros:</strong> {{ genresText }}</p>
-        </section>
-
-        <div class="action-buttons">
-          <ion-button (click)="addToList(movie)">
-            <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-            Añadir a mi lista
-          </ion-button>
-
-          <ion-button (click)="openCommentModal(movie)">
-            <ion-icon slot="start" name="chatbubble-ellipses-outline"></ion-icon>
-            Escribir comentario
-          </ion-button>
+      <div class="hero-section">
+        <div class="poster-wrapper">
+          <img [src]="getPosterUrl(movie.poster_path)" alt="{{ movie.title }}" class="poster">
+          <button class="trailer-btn" *ngIf="trailerKey" (click)="openTrailer()">
+            <ion-icon name="play-circle-outline"></ion-icon>
+            <span>Ver tráiler</span>
+          </button>
         </div>
 
-        <!-- Comentarios existente, solo de pruebaa-->
-        <section class="comments-section" *ngIf="comments!.length > 0">
-          <h4>Comentarios de otros usuarios</h4>
-          <div *ngFor="let c of comments" class="comment">
-            <p><strong>{{ c.user }}:</strong> {{ c.text }}</p>
-          </div>
-        </section>
+        <div class="hero-info">
+          <h1 class="movie-title">{{ movie.title }}</h1>
 
+          <div class="meta-row">
+            <span class="meta-chip">{{ movie.release_date | date:'yyyy' }}</span>
+            <span class="meta-chip">{{ movie.runtime }} min</span>
+            <span class="rating-chip">⭐ {{ movie.vote_average?.toFixed(1) }}</span>
+          </div>
+
+          <p class="genres">{{ genresText }}</p>
+          <p class="original-lang">
+            <span class="label">Idioma original:</span>
+            {{ movie.original_language?.toUpperCase() }}
+          </p>
+
+          <p class="overview">{{ movie.overview }}</p>
+
+          <button class="add-btn" (click)="addToList(movie)">
+            Añadir a mi lista
+          </button>
+        </div>
+      </div>
+
+      <div class="comments-section">
+        <h2 class="section-title">
+          Comentarios
+          <span class="count" *ngIf="movieService.comentarios.length > 0">
+            {{ movieService.comentarios.length }}
+          </span>
+        </h2>
+
+        <div class="comment-composer" *ngIf="estaLogueado">
+          <div class="composer-avatar">
+            <ion-icon name="person-circle-outline"></ion-icon>
+          </div>
+          <div class="composer-body">
+            <textarea [(ngModel)]="movieService.nuevoComentario" placeholder="¿Qué te ha parecido esta película?"
+              rows="3" class="comment-textarea">
+            </textarea>
+            <div class="composer-footer">
+              <label class="toggle-label">
+                <input type="checkbox" [checked]="esPublico" (change)="esPublico = !esPublico">
+                <ion-icon [name]="esPublico ? 'globe-outline' : 'lock-closed-outline'"></ion-icon>
+                <span>{{esPublico ? 'Público' : 'Privado' }}</span>
+              </label>
+              <button class="send-btn" (click)="enviarComentario(movie.id, movie.title)">
+                Publicar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="guest-prompt" *ngIf="!estaLogueado">
+          <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+          <span><a (click)="irAlLogin()" class="login-link">Inicia sesión</a> para dejar un comentario</span>
+        </div>
+
+        <div class="comments-list" *ngIf="movieService.comentarios.length > 0">
+          <div *ngFor="let c of movieService.comentarios" class="comment-card" [class.comment-privado]="!c.esPublico">
+            <div class="comment-avatar">
+              <img *ngIf="c.fotoPerfil" [src]="c.fotoPerfil" class="avatar-img">
+              <ion-icon *ngIf="!c.fotoPerfil" name="person-circle-outline" class="avatar-icon"></ion-icon>
+            </div>
+            <div class="comment-body">
+              <div class="comment-header">
+                <strong class="comment-user">{{ c.username }}</strong>
+                <span class="comment-date">{{ c.fecha | date:'d MMM yyyy':'':'es' }}</span>
+
+                <span class="privado-badge" *ngIf="!c.esPublico && esAutor(c.usuarioId)">
+                  <ion-icon name="lock-closed-outline"></ion-icon>
+                  Privado
+                </span>
+              </div>
+
+              <p class="comment-text">{{ c.texto }}</p>
+
+              <button class="delete-btn" *ngIf="esAutor(c.usuarioId)" (click)="eliminarComentario(c.id)">
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="no-comments" *ngIf="movieService.comentarios.length === 0">
+          <ion-icon name="chatbubbles-outline"></ion-icon>
+          <p>Sé el primero en comentar</p>
+        </div>
       </div>
     </div>
   </ion-content>
 </ng-container>
 
 <ng-template #loadingTemplate>
-  <ion-content class="ion-padding">
-    <div class="loading-text">Cargando detalles...</div>
+  <ion-content>
+    <div class="loading-screen">
+      <div class="spinner"></div>
+      <p>Cargando película...</p>
+    </div>
   </ion-content>
 </ng-template>
