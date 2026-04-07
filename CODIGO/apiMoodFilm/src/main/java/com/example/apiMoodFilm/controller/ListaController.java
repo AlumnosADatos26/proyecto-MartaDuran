@@ -1,5 +1,6 @@
 package com.example.apiMoodFilm.controller;
 
+import com.example.apiMoodFilm.dto.ListaDTO;
 import com.example.apiMoodFilm.model.ListaPelicula;
 import com.example.apiMoodFilm.service.ListaService;
 import org.springframework.web.bind.annotation.*;
@@ -35,4 +36,14 @@ public class ListaController {
             @PathVariable Long peliculaId) {
         listaService.eliminarPelicula(listaId, peliculaId);
     }
+
+    // Obtener todas las listas de un usuario concreto
+    @GetMapping("/usuario/{usuarioId}")
+    public List<ListaDTO> obtenerListasDeUsuario(@PathVariable Long usuarioId) {
+        return listaService.obtenerPorUsuario(usuarioId)
+                .stream()
+                .map(l -> new ListaDTO(l.getId(), l.getNombre(), l.getUsuario().getId()))
+                .collect(java.util.stream.Collectors.toList());
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.example.apiMoodFilm.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -20,6 +21,7 @@ public class ListaPelicula {
 
     @ManyToOne
     @JoinColumn(name = "lista_id")
+    @JsonIgnore 
     private Lista lista;
 
     public ListaPelicula() {

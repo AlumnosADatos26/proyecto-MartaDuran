@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.example.apiMoodFilm.model.AuthProvider;
 import com.example.apiMoodFilm.security.JwtUtil;
 import com.example.apiMoodFilm.dto.AuthResponse;
+import com.example.apiMoodFilm.model.Lista;
+import com.example.apiMoodFilm.repository.ListaRepository;
 
 @Service
 public class AuthService {
@@ -15,18 +17,19 @@ public class AuthService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final ListaRepository listaRepository;
 
     public AuthService(UsuarioRepository usuarioRepository,
             PasswordEncoder passwordEncoder,
-            JwtUtil jwtUtil) {
-
+            JwtUtil jwtUtil,
+            ListaRepository listaRepository) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.listaRepository = listaRepository;
     }
 
     public Usuario register(RegisterRequest request) {
-
         if (usuarioRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("El email ya existe");
         }
@@ -37,9 +40,21 @@ public class AuthService {
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         usuario.setProveedor(AuthProvider.LOCAL);
 
-        return usuarioRepository.save(usuario);
+        Usuario nuevoUsuario = usuarioRepository.save(usuario);
+
+        //añadimosesto para crear las tres listas por defecto
+        String[] listasPorDefecto = {"Favoritas", "Por ver", "Vistas"};
+        for (String nombre : listasPorDefecto) {
+            Lista lista = new Lista();
+            lista.setNombre(nombre);
+            lista.setUsuario(nuevoUsuario);
+            listaRepository.save(lista);
+        }
+
+        return nuevoUsuario;
     }
 
+    
     public AuthResponse login(String email, String password) {
 
         Usuario usuario = usuarioRepository.findByEmail(email)

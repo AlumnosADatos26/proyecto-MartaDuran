@@ -10,7 +10,7 @@ public class Comentario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String texto;
 
     private LocalDateTime fecha = LocalDateTime.now();
@@ -19,14 +19,35 @@ public class Comentario {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    @ManyToOne
-    @JoinColumn(name = "lista_id")
-    private Lista lista;
+    @Column(nullable = false)   //sustituimos lista por tmdbId para asociar comentario con película
+    private Long tmdbId;
+
+    @Column(nullable = false)
+    private boolean esPublico = true;  // por defecto lo ponemos público
+
+    private String tituloPelicula;  // para mostrar en "Mis comentarios"
 
     public Comentario() {
     }
 
     // Getters y setters
+    public boolean isEsPublico() {
+        return esPublico;
+    }
+
+    public void setEsPublico(boolean esPublico) {
+        this.esPublico = esPublico;
+    }
+
+    public String getTituloPelicula() {
+        return tituloPelicula;
+    }
+
+    public void setTituloPelicula(String tituloPelicula) {
+        this.tituloPelicula = tituloPelicula;
+    }
+    
+    
     public Long getId() {
         return id;
     }
@@ -59,11 +80,12 @@ public class Comentario {
         this.usuario = usuario;
     }
 
-    public Lista getLista() {
-        return lista;
+    public Long getTmdbId() {
+        return tmdbId;
     }
 
-    public void setLista(Lista lista) {
-        this.lista = lista;
+    public void setTmdbId(Long tmdbId) {
+        this.tmdbId = tmdbId;
     }
+
 }

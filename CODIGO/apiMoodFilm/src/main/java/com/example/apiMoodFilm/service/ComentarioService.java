@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ComentarioService {
@@ -30,5 +31,26 @@ public class ComentarioService {
 
     public void eliminar(Long id) {
         comentarioRepository.deleteById(id);
+    }
+
+    public List<Comentario> obtenerPorPelicula(Long tmdbId) {
+        return comentarioRepository.findByTmdbIdAndEsPublicoTrue(tmdbId);
+    }
+
+    public List<Comentario> obtenerPorUsuario(Long usuarioId) {
+        return comentarioRepository.findByUsuarioId(usuarioId);
+    }
+
+    // Solo publicos
+    public List<Comentario> obtenerPublicosPorPelicula(Long tmdbId) {
+        return comentarioRepository.findByTmdbIdAndEsPublicoTrue(tmdbId);
+    }
+
+// Públicos de todos + privados propios
+    public List<Comentario> obtenerVisiblesParaUsuario(Long tmdbId, Long usuarioId) {
+        List<Comentario> todos = comentarioRepository.findByTmdbId(tmdbId);
+        return todos.stream()
+                .filter(c -> c.isEsPublico() || c.getUsuario().getId().equals(usuarioId))
+                .collect(Collectors.toList());
     }
 }
