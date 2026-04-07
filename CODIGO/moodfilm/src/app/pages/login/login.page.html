@@ -8,17 +8,17 @@
       <p class="app-subtitle">Encuentra la película perfecta para tu estado de ánimo</p>
     </div>
 
-    <div class="login-form">
+    <div class="login-form" autocomplete="off">
 
       <div class="input-group">
         <ion-icon name="mail-outline" class="input-icon"></ion-icon>
-        <ion-input type="email" placeholder="Correo electrónico" [(ngModel)]="email" class="custom-input">
+        <ion-input type="email" placeholder="Correo electrónico" [(ngModel)]="email" class="custom-input" autocomplete="off">
         </ion-input>
       </div>
 
       <div class="input-group">
         <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
-        <ion-input type="password" placeholder="Contraseña" [(ngModel)]="password" class="custom-input">
+        <ion-input type="password" placeholder="Contraseña" [(ngModel)]="password" class="custom-input" autocomplete="off">
         </ion-input>
       </div>
 

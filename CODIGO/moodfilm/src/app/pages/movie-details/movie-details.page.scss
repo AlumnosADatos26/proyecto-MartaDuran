@@ -8,7 +8,6 @@ $surface:      rgba(255,255,255,0.06);
 $border:       rgba(255,255,255,0.12);
 $muted:        rgba(255,255,255,0.45);
 
-
 //la base
 ion-content {
   --background: none;
@@ -22,7 +21,6 @@ ion-toolbar {
   --color: #{$text};
   backdrop-filter: blur(12px);
 }
-
 
 //backdrop
 .backdrop-blur {
@@ -45,7 +43,6 @@ ion-toolbar {
   padding: 24px 20px 60px;
   max-width: 900px; margin: 0 auto;
 }
-
 .hero-section {
   display: flex; gap: 28px; align-items: flex-start;
   margin-bottom: 40px;
@@ -75,7 +72,6 @@ ion-toolbar {
 
 //la informacion
 .hero-info { flex: 1; padding-top: 8px; }
-
 .movie-title {
   font-size: 2rem; font-weight: 700; color: $gold;
   line-height: 1.2; margin: 0 0 14px; letter-spacing: -0.02em;
@@ -137,7 +133,6 @@ ion-toolbar {
 }
 .composer-avatar ion-icon { font-size: 2.2rem; color: rgba(255,255,255,0.4); }
 .composer-body { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-
 .comment-textarea {
   width: 100%; background: transparent; border: none;
   border-bottom: 1px solid $border; color: $text;
@@ -249,3 +244,24 @@ ion-toolbar {
   &:hover { background: rgba(255,255,255,0.1); }
 }
 
+.ver-mas-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.ver-mas-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--ion-color-primary); 
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.2);
+  }
+}

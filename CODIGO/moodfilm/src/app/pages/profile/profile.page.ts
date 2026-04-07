@@ -6,17 +6,15 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/authService';
 import { ListaService } from 'src/app/services/ListaService';
 import { addIcons } from 'ionicons';
-import { personOutline, bookmarkOutline, filmOutline, chevronForwardOutline, logOutOutline, heart, checkmarkCircle, time, globeOutline, chevronDownOutline } from 'ionicons/icons';
+import { personOutline, bookmarkOutline, filmOutline, chevronForwardOutline, logOutOutline, heart, checkmarkCircle, time, globeOutline, chevronDownOutline, chatbubblesOutline } from 'ionicons/icons';
 import { ComentarioService } from 'src/app/services/ComentarioService';
-import { environment } from 'src/environments/environment';
-import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, DatePipe]
+  imports: [IonicModule, CommonModule, FormsModule]
 })
 
 export class ProfilePage implements OnInit {
@@ -34,7 +32,6 @@ export class ProfilePage implements OnInit {
   esInvitado = false;
   //para los comentarios del usuario:
   misComentarios: any[] = [];
-  mostrarComentarios: boolean = false; 
 
   constructor(
     private auth: AuthService,
@@ -44,7 +41,7 @@ export class ProfilePage implements OnInit {
   ) {
     addIcons({
       personOutline, bookmarkOutline, filmOutline, chevronForwardOutline,
-      logOutOutline, heart, checkmarkCircle, time, globeOutline, chevronDownOutline
+      logOutOutline, heart, checkmarkCircle, time, globeOutline, chevronDownOutline, chatbubblesOutline
     });
   }
 
@@ -57,6 +54,13 @@ export class ProfilePage implements OnInit {
   }
 
   async cargarPerfil() {
+    this.username = '';
+    this.email = '';
+    this.listas = [];
+    this.misComentarios = [];
+    this.peliculasVistas = 0;
+    this.peliculasFavoritas = 0;
+    this.totalListas = 0;
 
     this.esInvitado = this.auth.isGuest();
 
@@ -109,11 +113,22 @@ export class ProfilePage implements OnInit {
 
   logout() {
     this.auth.logout();
+    this.username = '';
+    this.email = '';
+    this.listas = [];
+    this.misComentarios = [];
+    this.peliculasVistas = 0;
+    this.peliculasFavoritas = 0;
+    this.totalListas = 0;
     this.router.navigate(['/login']);
   }
 
   irAPelicula(tmdbId: number) {
     this.router.navigate(['/movie-details'], { queryParams: { id: tmdbId } });
   }
+
+irAMisComentarios() {
+  this.router.navigate(['/my-comments']); 
+}
 
 }

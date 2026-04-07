@@ -1,8 +1,18 @@
+// Variables:
+$purple-dark:  #4B0082;
+$purple-light: #8A2BE2;
+$gold:         #FFD700;
+$orange:       #FFA500;
+$text:         #EEE;
+$surface:      rgba(255,255,255,0.06);
+$border:       rgba(255,255,255,0.12);
+$muted:        rgba(255,255,255,0.45);
+
 .profile-content {
   --background: #f5f5f5;
 }
 
-//para la tarjeta del usuario:
+// Para la tarjeta del usuario:
 .user-card {
   background: linear-gradient(135deg, #6A0DAD, #9b30d9);
   border-radius: 0 0 24px 24px;
@@ -48,7 +58,7 @@
   font-size: 13px;
 }
 
-//para las estadísticas:
+// Para las estadísticas:
 .stats-row {
   display: flex;
   gap: 12px;
@@ -79,7 +89,7 @@
   }
 }
 
-//para las secciones:
+// Para las secciones:
 .section {
   padding: 0 16px;
   margin-bottom: 16px;
@@ -130,7 +140,7 @@
   }
 }
 
-//btn de cerrar sesion: 
+// Btn de cerrar sesion: 
 .btn-logout {
   --border-color: #FFA500;
   --color: #FFA500;
@@ -145,7 +155,7 @@
   margin: 0 0 12px 0;
 }
 
-//cada lista tiene su color
+// Cada lista tiene su color
 ion-col:nth-child(1) .lista-icon { color: #e91e8c; } // Favoritas en rosa
 ion-col:nth-child(2) .lista-icon { color: #FFA500; } // Por ver en naranja
 ion-col:nth-child(3) .lista-icon { color: #4CAF50; } // Vistas en verde
@@ -185,97 +195,4 @@ ion-col:nth-child(3) .lista-icon { color: #4CAF50; } // Vistas en verde
   margin: 0;
   word-break: break-word;   
   text-align: center;
-}
-
-.comentario-card {
-  position: relative;
-  overflow: hidden; //Para el efecto ripple
-  display: flex;
-  gap: 16px;
-  padding: 16px;
-  margin: 12px 0;
-  background: white; //blanco para que resalte sobre el fondo gris
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  align-items: flex-start;
-
-  .comentario-avatar {
-    flex-shrink: 0; 
-    width: 44px;
-    height: 44px;
-
-    .avatar-img, .avatar-placeholder {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px; //cuadrado redondeado 
-      object-fit: cover;
-    }
-
-    .avatar-placeholder {
-      background: #f0f0f0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      ion-icon { font-size: 28px; color: #ccc; }
-    }
-  }
-
-  .comentario-info {
-    flex: 1;
-
-    .header-comentario {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-    .comentario-titulo {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #1a1a1a;
-      margin: 0;
-    }
-    .comentario-texto {
-      font-size: 0.9rem;
-      color: #444;
-      font-style: italic;
-      line-height: 1.4;
-      margin: 8px 0;
-    }
-    .comentario-footer {
-      .comentario-fecha {
-        font-size: 0.75rem;
-        color: #999;
-        font-weight: 500;
-      }
-    }
-  }
-}
-
-//badge de privacidad 
-.badge-privacidad {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.7rem;
-  padding: 4px 8px;
-  border-radius: 20px;
-  background: rgba(106, 13, 173, 0.1);
-  color: #6A0DAD;
-  font-weight: 600;
-  text-transform: uppercase;
-
-  &.is-private {
-    background: #f5f5f5;
-    color: #888;
-  }
-}
-
-.comentario-card {
-  border-left: 5px solid #6A0DAD; 
-  background: white;
-  transition: transform 0.2s;
-  // Colores alternos usando nth-child
-  &:nth-child(odd) { border-left-color: #FFA500; } //nranja para los impares
-  &:nth-child(3n) { border-left-color: #e91e8c; }  //rosa cada tres
 }

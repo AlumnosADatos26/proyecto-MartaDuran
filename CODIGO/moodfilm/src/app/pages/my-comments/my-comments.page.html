@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="goBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Mis comentarios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div *ngIf="comentarios.length === 0" class="no-comments">
+    <ion-icon name="chatbubbles-outline"></ion-icon>
+    <p>Aún no has comentado ninguna película</p>
+  </div>
+
+  <div *ngFor="let c of comentarios" class="comentario-card" (click)="irAPelicula(c.tmdbId)">
+    <div class="comentario-info">
+      <div class="header-comentario">
+        <h4 class="comentario-titulo">{{ c.tituloPelicula }}</h4>
+        <span class="badge-privacidad" [class.is-private]="!c.esPublico">
+          <ion-icon [name]="c.esPublico ? 'globe-outline' : 'lock-closed-outline'"></ion-icon>
+          {{ c.esPublico ? 'Público' : 'Privado' }}
+        </span>
+      </div>
+      <p class="comentario-texto">"{{ c.texto }}"</p>
+      <span class="comentario-fecha">{{ c.fecha | date:'d MMM yyyy':'':'es' }}</span>
+    </div>
+  </div>
+
+</ion-content>

@@ -6,8 +6,10 @@ import { MovieService } from 'src/app/services/MovieService';
 import { environment } from 'src/environments/environment';
 import { NavController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { arrowBackOutline, playCircleOutline, personCircleOutline, lockClosedOutline, chatbubblesOutline, 
-          sendOutline, globeOutline, chatbubbleEllipsesOutline } from 'ionicons/icons';
+import {
+  arrowBackOutline, playCircleOutline, personCircleOutline, lockClosedOutline, chatbubblesOutline,
+  sendOutline, globeOutline, chatbubbleEllipsesOutline
+} from 'ionicons/icons';
 import { ListaService } from 'src/app/services/ListaService';
 import { AuthService } from 'src/app/services/authService';
 import { FormsModule } from '@angular/forms';
@@ -26,6 +28,10 @@ export class MovieDetailsPage implements OnInit {
   readonly IMAGE_BASE_URL = environment.tmdbImageUrl;
   trailerKey: string | null = null;
   esPublico: boolean = true;
+  maxCaracteres = 700;
+  comentariosMostrados = 4;
+  private cameFromLogin = false;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -46,10 +52,12 @@ export class MovieDetailsPage implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.queryParamMap.get('id');
+    const from = this.route.snapshot.queryParamMap.get('from');
+    this.cameFromLogin = from === 'login';
+
     if (id) {
       this.loadMovieDetails(+id);
     } else {
-      console.error('No se recibió ID de película');
       this.router.navigate(['/discover']);
     }
   }
@@ -150,9 +158,21 @@ export class MovieDetailsPage implements OnInit {
     window.open(`https://www.youtube.com/watch?v=${this.trailerKey}`, '_blank');
   }
 
-  goBack() { this.navCtrl.back(); }
 
-  irAlLogin() { this.router.navigate(['/login']); }
+  goBack() {
+    if (this.cameFromLogin) {
+      this.router.navigate(['/tabs/discover']);
+    } else {
+      this.navCtrl.back();
+    }
+  }
+
+  irAlLogin() {
+    //pasa la url  actual para volver aquí tras el login
+    this.router.navigate(['/login'], {
+      queryParams: { returnUrl: this.router.url }
+    });
+  }
 
   async enviarComentario(tmdbId: number, tituloPelicula: string) {
     if (!this.estaLogueado) {
@@ -164,8 +184,28 @@ export class MovieDetailsPage implements OnInit {
       await alert.present();
       return;
     }
-    await this.movieService.enviarComentario(tmdbId, tituloPelicula, this.esPublico);
-    this.esPublico = true;
+
+    const texto = this.movieService.nuevoComentario.trim();
+
+    if (texto.length === 0) {
+      return;
+    }
+
+    try {
+      await this.movieService.enviarComentario(texto, tmdbId, tituloPelicula, this.esPublico);
+      this.movieService.nuevoComentario = '';
+      this.esPublico = true;
+    }
+
+    catch (error) {
+      console.error("Error al enviar comentario:", error);
+      const toast = await this.toastCtrl.create({
+        message: 'Error al publicar el comentario. Inténtalo de nuevo.',
+        duration: 2000,
+        color: 'danger'
+      });
+      await toast.present();
+    }
   }
 
   async eliminarComentario(id: number) {
@@ -185,4 +225,15 @@ export class MovieDetailsPage implements OnInit {
     });
     await alert.present();
   }
+
+
+  get comentariosVisibles() {
+    return this.movieService.comentarios.slice(0, this.comentariosMostrados);
+  }
+
+  verMasComentarios() {
+    this.comentariosMostrados += 4;
+  }
+
+
 }

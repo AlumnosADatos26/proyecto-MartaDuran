@@ -7,6 +7,8 @@ export class AuthService {
 
     saveToken(token: string) {
         localStorage.setItem('token', token);
+        localStorage.removeItem('guest');
+        localStorage.removeItem('userId');
     }
 
     getToken(): string | null {
@@ -24,6 +26,9 @@ export class AuthService {
     logout() {
         localStorage.removeItem('token');
         localStorage.removeItem('guest');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('username');
+        localStorage.removeItem('email');
     }
 
     isLogged(): boolean {

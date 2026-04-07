@@ -1,0 +1,128 @@
+ion-content {
+  /*fondo degradado*/
+  --background: linear-gradient(
+    135deg, 
+    rgba(106, 13, 173, 0.25) 0%,  
+    rgba(255, 255, 255, 1) 50%,    
+    rgba(255, 165, 0, 0.2) 100%    
+  ) no-repeat fixed;
+}
+
+.comentario-card {
+  position: relative;
+  overflow: hidden; 
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: white; 
+  border-radius: 12px; 
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  
+  width: 92%;           
+  max-width: 550px;     
+  margin: 16px auto;    
+  
+  border-left: 5px solid #6A0DAD; 
+  transition: transform 0.2s;
+
+  /*colores alternos según el orden */
+  &:nth-child(odd) { border-left-color: #FFA500; } 
+  &:nth-child(3n) { border-left-color: #e91e8c; }  
+  &:active {
+    transform: scale(0.98);
+  }
+
+  .comentario-info {
+    width: 100%;
+
+    .header-comentario {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 8px;
+
+      .comentario-titulo {
+        flex: 1;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin: 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    }
+
+    .comentario-texto {
+      font-size: 0.95rem;
+      color: #444;
+      font-style: italic;
+      line-height: 1.5;
+      margin: 10px 0;
+      border-left: 2px solid #f8f8f8;
+      padding-left: 10px;
+      word-wrap: break-word; 
+    }
+
+    .comentario-fecha {
+      display: block;
+      font-size: 0.75rem;
+      color: #999;
+      font-weight: 500;
+      text-align: right;
+    }
+  }
+}
+
+/*badge de privacidad */
+.badge-privacidad {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  padding: 4px 8px;
+  border-radius: 20px;
+  background: rgba(106, 13, 173, 0.1);
+  color: #6A0DAD;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  &.is-private {
+    background: #f5f5f5;
+    color: #888;
+  }
+}
+
+/*paraa cuando no hay comentarios */
+.no-comments {
+  text-align: center;
+  padding: 50px 20px;
+  color: #666;
+  
+  ion-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    color: #ccc;
+  }
+}
+
+/* ajuste para móviles muy pequeños */
+@media (max-width: 350px) {
+  .comentario-card {
+    width: 95%;
+    padding: 12px;
+  }
+  
+  .header-comentario {
+    flex-direction: column;
+    .badge-privacidad {
+      margin-top: 5px;
+      align-self: flex-start;
+    }
+  }
+}

@@ -20,7 +20,7 @@ export class MovieService {
 
   comentarios: any[] = [];
   nuevoComentario: string = '';
-  esPublico: boolean = true; 
+  esPublico: boolean = true;
 
   getPopularMovies(page = 1): Promise<any> {
     const url = `${environment.apiBaseUrl}/tmdb/populares?page=${page}`;
@@ -85,33 +85,27 @@ export class MovieService {
   }
 
   //cargar comentarios
-async cargarComentarios(tmdbId: number) {
+  async cargarComentarios(tmdbId: number) {
     try {
-        //el backend ya devuelve solo lo que debe ver este usuario
-        this.comentarios = await this.comentarioService.getComentariosPorPeli(tmdbId);
-    } 
-    catch (error) {
-        console.error('Error al cargar comentarios', error);
+      //el backend ya devuelve solo lo que debe ver este usuario
+      this.comentarios = await this.comentarioService.getComentariosPorPeli(tmdbId);
     }
-}
+    catch (error) {
+      console.error('Error al cargar comentarios', error);
+    }
+  }
 
   //enviar comentario
-  async enviarComentario(tmdbId: number, tituloPelicula: string, esPublico: boolean) {
-    if (!this.nuevoComentario.trim()) return;
-
+  async enviarComentario(texto: string, tmdbId: number, tituloPelicula: string, esPublico: boolean) {
     try {
-      await this.comentarioService.guardarComentario(this.nuevoComentario, tmdbId, tituloPelicula, esPublico);
-      this.nuevoComentario = '';
+      // Llamamos al ComentarioService pasándole todos los datos
+      await this.comentarioService.guardarComentario(texto, tmdbId, tituloPelicula, esPublico);
+      //desspués de guardar, recargamos la lista para que aparezca el nuevo
       await this.cargarComentarios(tmdbId);
-
     } 
     catch (error) {
-      const toast = await this.toastCtrl.create({
-        message: 'Error al comentar',
-        duration: 2000,
-        position: 'bottom'
-      });
-      await toast.present();
+      console.error('Error en MovieService al enviar:', error);
+      throw error; //re-lanzamos el error para que la página muestre el toasr rojo deerror
     }
   }
 

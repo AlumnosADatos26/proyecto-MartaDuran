@@ -31,7 +31,11 @@ export const routes: Routes = [
     path: 'movie-details',
     loadComponent: () =>
       import('./pages/movie-details/movie-details.page').then(m => m.MovieDetailsPage)
+  },  {
+    path: 'my-comments',
+    loadComponent: () => import('./pages/my-comments/my-comments.page').then( m => m.MyCommentsPage)
   }
+
 
 
 
