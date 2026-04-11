@@ -14,7 +14,7 @@ $muted:        rgba(255,255,255,0.45);
 
 // Para la tarjeta del usuario:
 .user-card {
-  background: linear-gradient(135deg, #6A0DAD, #9b30d9);
+  background: linear-gradient(135deg, hsl(275, 100%, 68%), #9b41cf);
   border-radius: 0 0 24px 24px;
   padding: 32px 24px 28px;
   text-align: center;
@@ -196,3 +196,81 @@ ion-col:nth-child(3) .lista-icon { color: #4CAF50; } // Vistas en verde
   word-break: break-word;   
   text-align: center;
 }
+
+
+.avatar-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-edit-hint {
+  font-size: 12px;
+  display: block;
+  cursor: pointer;
+}
+
+.avatar-selector {
+  background: var(--ion-card-background);
+  border-radius: 12px;
+  padding: 12px;
+  margin: 8px 16px;
+  text-align: center;
+}
+
+
+.avatares-grid {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.avatar-opcion {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: border 0.2s;
+
+  &.seleccionado {
+    border-color: var(--ion-color-primary);
+  
+  }
+}
+
+.description-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: -8px 20px 16px; // Ajusta el margen para que quede armónico
+  font-style: italic;
+  line-height: 1.2;
+  margin-top: 8px; 
+  margin-bottom: 12px;
+}
+
+.genre-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 0.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 12px;
+}
+
+
+.description-text {
+  margin-top: 6px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-style: italic;
+  text-align: center;
+}
+
+

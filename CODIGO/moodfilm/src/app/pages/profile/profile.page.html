@@ -8,10 +8,14 @@
 
   <div class="user-card">
     <div class="avatar">
-      <ion-icon name="person-outline"></ion-icon>
+      <img [src]="fotoPerfil || 'assets/avatars/avatar0.png'" class="avatar-img">
     </div>
     <h2 class="username">{{ username }}</h2>
-    <p class="email">{{ email }}</p>
+    <div class="genre-badge" *ngIf="!esInvitado && generoFavorito">
+      <span>🎬</span>
+      <span>{{ generoFavorito }}</span>
+    </div>
+    <p class="description-text" *ngIf="!esInvitado">{{ descripcion || 'Sin descripción' }}</p>
     <ion-button *ngIf="!esInvitado" fill="outline" size="small" class="btn-edit" (click)="editarPerfil()">
       Editar perfil
     </ion-button>
@@ -65,7 +69,6 @@
     </div>
   </div>
 
-  <!-- mis comentarios -->
   <div class="section" *ngIf="!esInvitado">
     <ion-item button (click)="irAMisComentarios()" lines="none" class="menu-item">
       <div class="menu-icon-box" slot="start">
@@ -79,7 +82,6 @@
     </ion-item>
   </div>
 
-  <!-- cerrar sesión — FUERA de la sección de comentarios -->
   <div class="section" *ngIf="!esInvitado">
     <ion-button expand="block" fill="outline" color="warning" class="btn-logout" (click)="logout()">
       <ion-icon name="log-out-outline" slot="start"></ion-icon>

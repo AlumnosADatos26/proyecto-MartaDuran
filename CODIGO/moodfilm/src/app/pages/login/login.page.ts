@@ -50,15 +50,25 @@ export class LoginPage {
         this.auth.saveToken(res.token);
         this.auth.saveUserId(res.userId);
         this.auth.saveUserInfo(res.username, res.email);
+        this.auth.saveBio(res.bio || '');
+        this.auth.saveGeneroFav(res.generoFavorito || '');
+
+        // siempre sincroniza, aunque sea null (limpia foto de sesión anterior)
+        if (res.fotoPerfil) {
+          this.auth.saveFotoPerfil(res.fotoPerfil);
+        } 
+        else {
+          localStorage.removeItem('fotoPerfil'); //limpia si esta cuenta no tiene foto
+        }
 
         let destino = this.returnUrl;
         if (destino.includes('movie-details')) {
           const separator = destino.includes('?') ? '&' : '?';
           destino = destino + separator + 'from=login';
         }
-        
         this.navCtrl.navigateRoot(destino);
       },
+
       error: (err) => {
         console.error('Error al iniciar sesion:', err);
         alert('Email o contraseña incorrectos');
@@ -81,4 +91,6 @@ export class LoginPage {
   goToRegister() {
     this.router.navigate(['/register']);
   }
+
+  
 }

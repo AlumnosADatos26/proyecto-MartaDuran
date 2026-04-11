@@ -1,0 +1,137 @@
+$purple-primary: #6A0DAD;
+$purple-dark:    #4B0082;
+$bg-gradient:    linear-gradient(135deg, #f8f9ff 0%, #e8ebf7 100%);
+$shadow-soft:    0 8px 24px rgba(106, 13, 173, 0.08);
+
+ion-content {
+  --background: #{$bg-gradient};
+}
+
+.edit-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+
+.avatar-card, .form-card {
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: $shadow-soft;
+}
+
+.main-preview-container {
+  width: 115px;
+  height: 115px;
+  margin: 0 auto 15px;
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(106, 13, 173, 0.2);
+  position: relative;
+  cursor: pointer;
+
+  .main-preview {
+    width: 115px;
+    height: 115px;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+  }
+
+
+  .main-preview-placeholder {
+    width: 115px;
+    height: 115px;
+    background: #f4f4f9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+    ion-icon {
+      font-size: 55px;
+      width: 55px;
+      height: 55px;
+      color: $purple-primary;
+      opacity: 0.5;
+    }
+  }
+}
+
+
+
+.section-label {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+
+.input-group {
+  margin-bottom: 20px;
+  ion-label {
+    display: block;
+    margin-bottom: 8px;
+    color: $purple-dark;
+    font-weight: 600;
+    font-size: 14px;
+  }
+}
+
+.custom-input {
+  --background: #fdfdff;
+  --padding-start: 15px;
+  --border-radius: 12px;
+   --highlight-height: 0 !important; 
+  --inner-border-width: 0 !important;
+  --border-style: none !important;
+
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  min-height: 48px;
+  margin: 0;
+
+  &.ion-focused, &.ion-touched, &.ion-valid, &.ion-invalid {
+    --highlight-height: 0 !important;
+    --inner-border-width: 0 !important;
+  }
+
+  &::part(container) {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  &::part(native) {
+    padding-bottom: 10px; 
+  }
+
+  &.ion-focused {
+    border-color: $purple-primary;
+  }
+}
+
+
+ion-textarea.custom-input::part(counter) {
+  margin-top: 5px;
+  color: #999;
+}
+
+
+.btn-save {
+  --background: linear-gradient(90deg, #{$purple-primary}, #8A2BE2);
+  --color: white;
+  --border-radius: 16px;
+  --box-shadow: 0 10px 20px rgba(106, 13, 173, 0.3);
+  height: 56px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+
+
+
+

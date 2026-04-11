@@ -1,13 +1,57 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>edit-profile</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/profile" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Editar Perfil</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">edit-profile</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <div class="edit-container">
+
+    <div class="avatar-card">
+      <div class="main-preview-container" (click)="abrirSelectorAvatar()">
+        <img [src]="fotoSeleccionada || 'assets/avatars/avatar0.png'" class="main-preview">
+      </div>
+      <p class="section-label">Toca para cambiar avatar</p>
+    </div>
+
+    <div class="form-card">
+      <div class="input-group">
+        <ion-label>Nombre de Usuario</ion-label>
+        <ion-input [(ngModel)]="username" type="text" placeholder="Tu nombre" class="custom-input"></ion-input>
+      </div>
+
+      <div class="input-group">
+        <ion-label>Descripción</ion-label>
+        <ion-textarea [(ngModel)]="bio" placeholder="Cuéntanos algo sobre ti..." [autoGrow]="true" class="custom-input"
+          maxlength="80" counter="true">
+        </ion-textarea>
+      </div>
+
+      <div class="input-group">
+        <ion-label>Género Favorito</ion-label>
+        <ion-select [(ngModel)]="generoFavorito" placeholder="Selecciona un género" class="custom-select"
+          interface="popover" [interfaceOptions]="{ cssClass: 'my-custom-popover' }">
+          <ion-select-option value="Accion">Acción</ion-select-option>
+          <ion-select-option value="Comedia">Comedia</ion-select-option>
+          <ion-select-option value="Terror">Terror</ion-select-option>
+          <ion-select-option value="Drama">Drama</ion-select-option>
+          <ion-select-option value="Sci-Fi">Ciencia Ficción</ion-select-option>
+        </ion-select>
+      </div>
+
+      <div class="password-section" *ngIf="proveedor === 'local'">
+        <div class="input-group">
+          <ion-label>Nueva Contraseña</ion-label>
+          <ion-input [(ngModel)]="password" type="password" placeholder="••••••••" class="custom-input"></ion-input>
+        </div>
+      </div>
+    </div>
+
+    <ion-button expand="block" (click)="guardarCambios()" class="btn-save">
+      GUARDAR CAMBIOS
+    </ion-button>
+  </div>
 </ion-content>
