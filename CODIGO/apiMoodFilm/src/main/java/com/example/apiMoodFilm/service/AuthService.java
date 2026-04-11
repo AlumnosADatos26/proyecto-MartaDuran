@@ -70,7 +70,10 @@ public class AuthService {
                 token,
                 usuario.getId(),
                 usuario.getUsername(),
-                usuario.getEmail()
+                usuario.getEmail(),
+                usuario.getFotoPerfil(),
+                usuario.getBio(),
+                usuario.getGeneroFavorito()
         );
     }
 

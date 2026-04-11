@@ -24,8 +24,12 @@ public class Usuario {
 
     private String googleId;
 
-    private String fotoPerfil;
+    private String fotoPerfil= "assets/avatars/avatar0.png"; //inicializamos la cuenta con una foto de perfil por defecto
 
+    private String bio;
+
+    private String generoFavorito;
+    
     @Enumerated(EnumType.STRING)
     private AuthProvider proveedor;
 
@@ -120,4 +124,22 @@ public class Usuario {
     public void setComentarios(List<Comentario> comentarios) {
         this.comentarios = comentarios;
     }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getGeneroFavorito() {
+        return generoFavorito;
+    }
+
+    public void setGeneroFavorito(String generoFavorito) {
+        this.generoFavorito = generoFavorito;
+    }
+    
+    
 }
