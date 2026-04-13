@@ -21,8 +21,11 @@ public class ListaPelicula {
 
     @ManyToOne
     @JoinColumn(name = "lista_id")
-    @JsonIgnore 
+    @JsonIgnore
     private Lista lista;
+
+    @Column(nullable = true)
+    private String mood;
 
     public ListaPelicula() {
     }
@@ -76,4 +79,13 @@ public class ListaPelicula {
         this.lista = lista;
     }
 
+    public String getMood() {
+        return mood;
+    }
+
+    public void setMood(String mood) {
+        this.mood = mood;
+    }
+    
+    
 }

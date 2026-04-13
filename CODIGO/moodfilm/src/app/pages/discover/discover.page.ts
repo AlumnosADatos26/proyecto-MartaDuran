@@ -79,4 +79,8 @@ export class DiscoverPage {
   }
 
 
+  irAMoodSearch(mood: string) {
+  this.router.navigate(['/tabs/search'], { queryParams: { mood } });
+}
+
 }

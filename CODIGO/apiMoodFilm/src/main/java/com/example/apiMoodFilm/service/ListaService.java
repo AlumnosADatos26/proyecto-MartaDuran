@@ -66,4 +66,11 @@ public class ListaService {
     public void eliminar(Long id) {
         listaRepository.deleteById(id);
     }
+
+    public List<ListaPelicula> obtenerPeliculasDeUsuario(Long usuarioId) {
+        List<Lista> listas = listaRepository.findByUsuarioId(usuarioId);
+        return listas.stream()
+                .flatMap(lista -> listaPeliculaRepository.findByListaId(lista.getId()).stream())
+                .collect(java.util.stream.Collectors.toList());
+    }
 }

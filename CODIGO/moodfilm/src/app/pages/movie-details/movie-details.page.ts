@@ -94,59 +94,7 @@ export class MovieDetailsPage implements OnInit {
     if (!this.estaLogueado || !userId) return false;
     return Number(comentarioUsuarioId) === Number(userId);
   }
-  async addToList(movie: any) {
-    const userId = this.auth.getUserId();
-    const esInvitado = this.auth.isGuest();
-    if (!userId || esInvitado) {
-      const alert = await this.alertCtrl.create({
-        header: 'Inicia sesión',
-        message: 'Debes iniciar sesión para guardar películas en tus listas.',
-        buttons: ['OK'], cssClass: 'alert-moderno'
-      });
-      await alert.present();
-      return;
-    }
-    const listas = await this.listaService.getListas(userId);
-    const inputs: any[] = [];
-    for (const lista of listas) {
-      inputs.push({ type: 'radio', label: lista.nombre, value: lista.id });
-    }
-    const alert = await this.alertCtrl.create({
-      header: '¿A qué lista añadir?',
-      inputs,
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Añadir',
-          handler: async (listaId) => {
-            if (!listaId) return;
-            try {
-              await this.listaService.addPelicula(listaId, {
-                tmdbId: movie.id, titulo: movie.title, posterPath: movie.poster_path
-              });
-              setTimeout(async () => {
-                const toast = await this.toastCtrl.create({
-                  message: `"${movie.title}" añadida a tu lista`,
-                  duration: 2000, position: 'bottom', cssClass: 'toast-moderno'
-                });
-                await toast.present();
-              }, 300);
-            } catch (error) {
-              setTimeout(async () => {
-                const toast = await this.toastCtrl.create({
-                  message: 'Esta película ya está en esa lista',
-                  duration: 2000, position: 'bottom', cssClass: 'toast-moderno'
-                });
-                await toast.present();
-              }, 300);
-            }
-          }
-        }
-      ],
-      cssClass: 'alert-moderno'
-    });
-    await alert.present();
-  }
+
 
   async loadTrailer(id: number) {
     const video = await this.movieService.getBestTrailer(id);
@@ -234,6 +182,131 @@ export class MovieDetailsPage implements OnInit {
   verMasComentarios() {
     this.comentariosMostrados += 4;
   }
+
+
+  async addToList(movie: any) {
+  const userId = this.auth.getUserId();
+  const esInvitado = this.auth.isGuest();
+
+  if (!userId || esInvitado) {
+    const alert = await this.alertCtrl.create({
+      header: 'Inicia sesión',
+      message: 'Debes iniciar sesión para guardar películas en tus listas.',
+      buttons: ['OK'],
+      cssClass: 'alert-moderno'
+    });
+    await alert.present();
+    return;
+  }
+
+  const listas = await this.listaService.getListas(userId);
+  const inputs: any[] = listas.map((lista: any) => ({
+    type: 'radio', label: lista.nombre, value: lista.id
+  }));
+
+  const alertLista = await this.alertCtrl.create({
+    header: '¿A qué lista añadir?',
+    inputs,
+    buttons: [
+      { text: 'Cancelar', role: 'cancel' },
+      {
+        text: 'Aceptar',
+        handler: async (listaId: any) => {
+          if (!listaId) return false;
+
+          const listaSeleccionada = listas.find((l: any) => l.id === listaId);
+          const nombre = listaSeleccionada?.nombre?.toLowerCase();
+
+          // Solo preguntamos mood en Vistas y Favoritas Y si la peli no está ya
+          if (nombre === 'vistas' || nombre === 'favoritas') {
+            const peliculas = await this.listaService.getPeliculasDeLista(listaId);
+            const yaExiste = peliculas.some((p: any) => p.tmdbId === movie.id);
+
+            if (yaExiste) {
+              // Ya está, guardamos sin preguntar mood (el backend lanzará error igual)
+              this.guardarEnLista(movie, listaId, null);
+            } else {
+              this.elegirMood(movie, listaId);
+            }
+          } else {
+            this.guardarEnLista(movie, listaId, null);
+          }
+          return true;
+        }
+      }
+    ],
+    cssClass: 'alert-moderno'
+  });
+
+  await alertLista.present();
+}
+
+
+  async elegirMood(movie: any, listaId: number) {
+
+    const moods = [
+      { emoji: '😄', label: 'Felicidad', value: 'feliz' },
+      { emoji: '😢', label: 'Tristeza', value: 'triste' },
+      { emoji: '🤩', label: 'Emoción', value: 'emocionado' },
+      { emoji: '😌', label: 'Tranquilidad', value: 'relajado' },
+      { emoji: '😱', label: 'Miedo', value: 'miedo' },
+    ];
+
+    const alertMood = await this.alertCtrl.create({
+      header: '¿Qué te hizo sentir?',
+      message: 'Cuéntanos tu mood',
+      inputs: moods.map(m => ({
+        type: 'radio',
+        label: `${m.emoji} ${m.label}`,
+        value: m.value
+      })),
+
+      buttons: [
+        {
+          text: 'Sin mood',
+          handler: () => { this.guardarEnLista(movie, listaId, null); }
+        },
+        {
+          text: 'Guardar',
+          handler: (mood) => { this.guardarEnLista(movie, listaId, mood || null); }
+        }
+      ],
+      cssClass: 'alert-moderno'
+    });
+
+    await alertMood.present();
+  }
+
+
+  async guardarEnLista(movie: any, listaId: number, mood: string | null) {
+    try {
+      await this.listaService.addPelicula(listaId, {
+        tmdbId: movie.id,
+        titulo: movie.title,
+        posterPath: movie.poster_path,
+        mood: mood
+      });
+
+      const toast = await this.toastCtrl.create({
+        message: `"${movie.title}" añadida a tu lista`,
+        duration: 2000,
+        position: 'bottom',
+        cssClass: 'toast-moderno'
+      });
+      await toast.present();
+
+    }
+    catch (error) {
+      const toast = await this.toastCtrl.create({
+        message: 'Esta película ya está en esa lista',
+        duration: 2000,
+        position: 'bottom',
+        cssClass: 'toast-moderno'
+      });
+      await toast.present();
+    }
+  }
+
 
 
 }

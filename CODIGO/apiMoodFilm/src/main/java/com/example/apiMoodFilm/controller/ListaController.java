@@ -46,4 +46,10 @@ public class ListaController {
                 .collect(java.util.stream.Collectors.toList());
     }
 
+    //obtenemod todas las peliculas de un usuario con su mood (para el mapa emocional)
+    @GetMapping("/usuario/{usuarioId}/peliculas")
+    public List<ListaPelicula> obtenerPeliculasDeUsuario(@PathVariable Long usuarioId) {
+        return listaService.obtenerPeliculasDeUsuario(usuarioId);
+    }
+
 }

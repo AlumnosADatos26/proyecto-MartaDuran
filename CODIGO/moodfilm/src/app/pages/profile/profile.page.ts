@@ -10,6 +10,7 @@ import { personOutline, bookmarkOutline, filmOutline, chevronForwardOutline, log
 import { ComentarioService } from 'src/app/services/ComentarioService';
 import { HttpClient } from '@angular/common/http';
 
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -30,6 +31,7 @@ export class ProfilePage implements OnInit {
   fotoPerfil: string | null = null;
   descripcion: string = '';
   generoFavorito: string = '';
+  moodStats: { mood: string, emoji: string, count: number }[] = [];
 
   constructor(
     private auth: AuthService,
@@ -40,8 +42,7 @@ export class ProfilePage implements OnInit {
   ) {
     addIcons({
       personOutline, bookmarkOutline, filmOutline, chevronForwardOutline,
-      logOutOutline, heart, checkmarkCircle, time, globeOutline, chevronDownOutline, chatbubblesOutline, cameraOutline
-    });
+      logOutOutline, heart, checkmarkCircle, time, globeOutline, chevronDownOutline, chatbubblesOutline, cameraOutline });
   }
 
   ngOnInit() {
@@ -135,8 +136,9 @@ export class ProfilePage implements OnInit {
       this.peliculasVistas = vistas;
       this.peliculasFavoritas = favs;
       this.misComentarios = await this.comentarioService.getComentariosPorUsuario(userId);
-
+      await this.cargarMoodStats(userId);
     } 
+    
     catch (error) {
       console.error('Error al cargar perfil:', error);
     }
@@ -173,5 +175,44 @@ export class ProfilePage implements OnInit {
   irAMisComentarios() {
     this.router.navigate(['/my-comments']);
   }
+
+ async cargarMoodStats(userId: string | number) {
+  try {
+    const peliculas = await this.http.get<any[]>(
+      `http://localhost:8080/listas/usuario/${userId}/peliculas`
+    ).toPromise();
+
+    const moodMap: { [key: string]: number } = {
+      feliz: 0, triste: 0, emocionado: 0, relajado: 0, miedo: 0
+    };
+
+    if (peliculas) {
+      peliculas.forEach(p => {
+        //pasamos a minusculas por si acaso el backend devuelve "Feliz"
+        const moodKey = p.mood?.toLowerCase();
+        if (moodKey && moodMap[moodKey] !== undefined) {
+          moodMap[moodKey]++;
+        }
+      });
+    }
+
+    // definimos los 5  para que el grafico no baile  
+    this.moodStats = [
+      { mood: 'Feliz',      emoji: '😄', count: moodMap['feliz'] },
+      { mood: 'Triste',     emoji: '😢', count: moodMap['triste'] },
+      { mood: 'Emocionado', emoji: '🤩', count: moodMap['emocionado'] },
+      { mood: 'Relajado',   emoji: '😌', count: moodMap['relajado'] },
+      { mood: 'Miedo',      emoji: '😱', count: moodMap['miedo'] },
+    ];
+
+  } 
+  catch (error) {
+    console.error('Error al cargar mood stats:', error);
+  }
+}
+
+get maxMood(): number {
+  return Math.max(...this.moodStats.map(m => m.count), 1);
+}
 
 }

@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { environment } from 'src/environments/environment';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-search',
@@ -56,10 +57,20 @@ export class SearchPage implements OnInit {
 
   constructor(
     private movieService: MovieService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+  this.route.queryParams.subscribe(params => {
+    if (params['mood']) {
+      this.selectedMood = params['mood'];
+      this.showFilters = true;
+      this.search();
+    }
+  });
+}
+
 
   async onSearchInput() {
     if (this.nombrePeli.trim().length >= 3) {

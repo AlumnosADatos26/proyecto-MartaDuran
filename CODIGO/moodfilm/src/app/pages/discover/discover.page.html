@@ -9,6 +9,32 @@
 
 <ion-content class="ion-padding">
 
+  <div class="mood-section">
+    <h2 class="mood-title">¿Cómo te sientes hoy?</h2>
+    <div class="mood-row">
+      <div class="mood-item" (click)="irAMoodSearch('feliz')">
+        <div class="mood-emoji">😄</div>
+        <span>Feliz</span>
+      </div>
+      <div class="mood-item" (click)="irAMoodSearch('triste')">
+        <div class="mood-emoji">😢</div>
+        <span>Triste</span>
+      </div>
+      <div class="mood-item" (click)="irAMoodSearch('emocionado')">
+        <div class="mood-emoji">🤩</div>
+        <span>Emocionado</span>
+      </div>
+      <div class="mood-item" (click)="irAMoodSearch('relajado')">
+        <div class="mood-emoji">😌</div>
+        <span>Relajado</span>
+      </div>
+      <div class="mood-item" (click)="irAMoodSearch('miedo')">
+        <div class="mood-emoji">😱</div>
+        <span>Miedo</span>
+      </div>
+    </div>
+  </div>
+
   <div *ngIf="loading && movies.length === 0" class="loading-text">
     Cargando películas...
   </div>
