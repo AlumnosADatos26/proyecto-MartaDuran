@@ -6,8 +6,16 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content class="ion-padding">
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" style="overflow: visible;"
+    [class.fab-hidden]="surpriseMovie">
+    <ion-button (click)="sorprendeme()" class="btn-sorpresa" mode="ios" [disabled]="isSurprising">
+      <ion-icon name="dice-outline" slot="start"></ion-icon>
+    <span>{{ isSurprising ? 'Buscando...' : '¿Qué veo hoy?' }}</span>
+    </ion-button>
+  </ion-fab>
+
 
   <div class="mood-section">
     <h2 class="mood-title">¿Cómo te sientes hoy?</h2>
@@ -35,6 +43,32 @@
     </div>
   </div>
 
+  <div class="surprise-overlay" *ngIf="surpriseMovie"></div>
+
+  <div class="surprise-card" *ngIf="surpriseMovie">
+    <div class="surprise-bg" [style.background-image]="'url(' + getPosterUrl(surpriseMovie.poster_path) + ')'"></div>
+
+    <button class="surprise-close" (click)="cerrarSorpresa()">✕</button>
+
+    <div class="surprise-poster-wrap">
+      <img [src]="getPosterUrl(surpriseMovie.poster_path)" class="surprise-poster" alt="poster">
+    </div>
+
+    <div class="surprise-info">
+      <h2 class="surprise-title">{{ surpriseMovie.title }}</h2>
+      <div class="surprise-meta">
+        <span>⭐ {{ surpriseMovie.vote_average?.toFixed(1) }}</span>
+        <span style="opacity: 0.5">|</span>
+        <span>{{ surpriseMovie.release_date?.split('-')[0] }}</span>
+      </div>
+      <p class="surprise-overview">{{ surpriseMovie.overview }}</p>
+
+      <button class="surprise-ver-btn" (click)="verFicha(surpriseMovie)">
+        Ver Ficha Completa
+      </button>
+    </div>
+  </div>
+
   <div *ngIf="loading && movies.length === 0" class="loading-text">
     Cargando películas...
   </div>
@@ -42,7 +76,7 @@
   <ion-grid *ngIf="movies.length > 0">
     <ion-row>
       <ng-container *ngFor="let movie of movies">
-        <ion-col size="12" size-md="6" size-lg="4" *ngIf="isValidMovie(movie)">
+        <ion-col size="12" size-md="6" size-lg="3" *ngIf="isValidMovie(movie)">
           <ion-card button (click)="verFicha(movie)">
             <ion-img [src]="getPosterUrl(movie.poster_path)"></ion-img>
 
@@ -64,10 +98,7 @@
         </ion-col>
       </ng-container>
     </ion-row>
-
-
   </ion-grid>
-
 
   <div class="load-more-button">
     <ion-button (click)="loadMoreMovies()">
