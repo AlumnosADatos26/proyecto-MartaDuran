@@ -98,10 +98,12 @@ export class DiscoverPage {
   }
 
 
-  irAMoodSearch(mood: string) {
-    this.router.navigate(['/tabs/search'], { queryParams: { mood } });
-  }
-
+irAMoodSearch(mood: string) {
+  this.router.navigate(['/tabs/search'], { 
+    queryParams: { mood },
+    replaceUrl: true  //reemplazamos la url en vez de apilarla
+  });
+}
 
   
   async sorprendeme() {

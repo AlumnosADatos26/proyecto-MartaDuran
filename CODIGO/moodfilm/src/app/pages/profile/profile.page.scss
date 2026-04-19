@@ -394,3 +394,16 @@ ion-col:nth-child(3) .lista-icon { color: #4CAF50; } // Vistas en verde
     display: block;
   }
 }
+
+.mood-resumen {
+  background: #fff8e7;
+  border-left: 3px solid #ffd700;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 0.85rem;
+  color: #555;        
+  strong {
+    color: #1a1a1a;   
+  }
+}

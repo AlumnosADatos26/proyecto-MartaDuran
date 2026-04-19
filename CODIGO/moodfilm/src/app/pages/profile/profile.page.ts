@@ -32,6 +32,8 @@ export class ProfilePage implements OnInit {
   descripcion: string = '';
   generoFavorito: string = '';
   moodStats: { mood: string, emoji: string, count: number }[] = [];
+  moodResumenMesAnterior: { texto: string, empate: boolean } | null = null;
+  subtituloGrafica = 'Este mes';
 
   constructor(
     private auth: AuthService,
@@ -42,7 +44,8 @@ export class ProfilePage implements OnInit {
   ) {
     addIcons({
       personOutline, bookmarkOutline, filmOutline, chevronForwardOutline,
-      logOutOutline, heart, checkmarkCircle, time, globeOutline, chevronDownOutline, chatbubblesOutline, cameraOutline });
+      logOutOutline, heart, checkmarkCircle, time, globeOutline, chevronDownOutline, chatbubblesOutline, cameraOutline
+    });
   }
 
   ngOnInit() {
@@ -137,8 +140,7 @@ export class ProfilePage implements OnInit {
       this.peliculasFavoritas = favs;
       this.misComentarios = await this.comentarioService.getComentariosPorUsuario(userId);
       await this.cargarMoodStats(userId);
-    } 
-    
+    }
     catch (error) {
       console.error('Error al cargar perfil:', error);
     }
@@ -176,43 +178,105 @@ export class ProfilePage implements OnInit {
     this.router.navigate(['/my-comments']);
   }
 
- async cargarMoodStats(userId: string | number) {
-  try {
-    const peliculas = await this.http.get<any[]>(
-      `http://localhost:8080/listas/usuario/${userId}/peliculas`
-    ).toPromise();
 
-    const moodMap: { [key: string]: number } = {
-      feliz: 0, triste: 0, emocionado: 0, relajado: 0, miedo: 0
-    };
+  async cargarMoodStats(userId: string | number) {
+    try {
+      const peliculas = await this.http.get<any[]>(
+        `http://localhost:8080/listas/usuario/${userId}/peliculas`)
+        .toPromise();
 
-    if (peliculas) {
-      peliculas.forEach(p => {
-        //pasamos a minusculas por si acaso el backend devuelve "Feliz"
-        const moodKey = p.mood?.toLowerCase();
-        if (moodKey && moodMap[moodKey] !== undefined) {
-          moodMap[moodKey]++;
-        }
+      if (!peliculas){
+         return;
+      }
+
+      const ahora = new Date();
+      const mesActual = ahora.getMonth();
+      const anioActual = ahora.getFullYear();
+      const mesAnterior = mesActual === 0 ? 11 : mesActual - 1;
+      const anioAnterior = mesActual === 0 ? anioActual - 1 : anioActual;
+
+      const pelisEsteMes = peliculas.filter(p => {
+        if (!p.fechaAñadida){
+          return false;
+        } 
+        const fecha = new Date(p.fechaAñadida);
+        return fecha.getMonth() === mesActual && fecha.getFullYear() === anioActual;
       });
+
+      const pelisMesAnterior = peliculas.filter(p => {
+        if (!p.fechaAñadida){
+            return false;
+        }
+        const fecha = new Date(p.fechaAñadida);
+        return fecha.getMonth() === mesAnterior && fecha.getFullYear() === anioAnterior;
+      });
+
+      const moodEmojis: { [key: string]: string } = {
+        feliz: '😄', triste: '😢', emocionado: '🤩', relajado: '😌', miedo: '😱'
+      };
+
+      //resuemn del mes controlando los empates:
+      if (pelisMesAnterior.length > 0) {
+        const moodMapAnterior: { [key: string]: number } = {
+          feliz: 0, triste: 0, emocionado: 0, relajado: 0, miedo: 0
+        };
+        pelisMesAnterior.forEach(p => {
+          const k = p.mood?.toLowerCase();
+          if (k && moodMapAnterior[k] !== undefined)
+             moodMapAnterior[k]++;
+        });
+
+        const maxCount = Math.max(...Object.values(moodMapAnterior));
+
+        if (maxCount > 0) {
+          const dominantes = Object.entries(moodMapAnterior)
+            .filter(([_, count]) => count === maxCount)
+            .map(([mood]) => ({
+              mood: mood.charAt(0).toUpperCase() + mood.slice(1),
+              emoji: moodEmojis[mood]
+            }));
+
+          let texto = '';
+          if (dominantes.length === 5) {
+            texto = `¡El mes pasado te moviste por todos los moods por igual! · ${maxCount} película${maxCount !== 1 ? 's' : ''} cada uno`;
+          } 
+          else if (dominantes.length === 1) {
+            texto = `El mes pasado tu mood dominante fue ${dominantes[0].emoji} ${dominantes[0].mood} · ${maxCount} película${maxCount !== 1 ? 's' : ''}`;
+          } 
+          else {
+            const lista = dominantes.map(d => `${d.emoji} ${d.mood}`).join(' y ');
+            texto = `El mes pasado empataron ${lista} · ${maxCount} película${maxCount !== 1 ? 's' : ''} cada uno`;
+          }
+
+          this.moodResumenMesAnterior = { texto, empate: dominantes.length > 1 };
+        }
+      }
+
+      //grafica: este mes si tiene datos, si no el anterior
+      const pelisParaGrafica = pelisEsteMes.length > 0 ? pelisEsteMes : pelisMesAnterior;
+
+      const moodMap: { [key: string]: number } = {
+        feliz: 0, triste: 0, emocionado: 0, relajado: 0, miedo: 0
+      };
+      pelisParaGrafica.forEach(p => {
+        const k = p.mood?.toLowerCase();
+        if (k && moodMap[k] !== undefined) moodMap[k]++;
+      });
+
+      this.moodStats = [
+        { mood: 'Feliz', emoji: '😄', count: moodMap['feliz'] },
+        { mood: 'Triste', emoji: '😢', count: moodMap['triste'] },
+        { mood: 'Emocionado', emoji: '🤩', count: moodMap['emocionado'] },
+        { mood: 'Relajado', emoji: '😌', count: moodMap['relajado'] },
+        { mood: 'Miedo', emoji: '😱', count: moodMap['miedo'] },
+      ];
+
+      this.subtituloGrafica = pelisEsteMes.length > 0 ? 'Este mes' : 'Mes anterior';
+
+    } 
+    catch (error) {
+      console.error('Error al cargar mood stats:', error);
     }
-
-    // definimos los 5  para que el grafico no baile  
-    this.moodStats = [
-      { mood: 'Feliz',      emoji: '😄', count: moodMap['feliz'] },
-      { mood: 'Triste',     emoji: '😢', count: moodMap['triste'] },
-      { mood: 'Emocionado', emoji: '🤩', count: moodMap['emocionado'] },
-      { mood: 'Relajado',   emoji: '😌', count: moodMap['relajado'] },
-      { mood: 'Miedo',      emoji: '😱', count: moodMap['miedo'] },
-    ];
-
-  } 
-  catch (error) {
-    console.error('Error al cargar mood stats:', error);
   }
-}
-
-get maxMood(): number {
-  return Math.max(...this.moodStats.map(m => m.count), 1);
-}
-
+  
 }

@@ -61,16 +61,27 @@ export class SearchPage implements OnInit {
     private route: ActivatedRoute
   ) { }
 
-  ngOnInit() {
-  this.route.queryParams.subscribe(params => {
-    if (params['mood']) {
-      this.selectedMood = params['mood'];
+  ionViewWillEnter() {
+    const mood = this.route.snapshot.queryParams['mood'];
+    console.log('ionViewWillEnter, mood en URL:', mood);
+
+    if (mood) {
+      this.selectedMood = mood;
       this.showFilters = true;
       this.search();
+    } 
+    else {
+      //limpiamos todo
+      this.selectedMood = null;
+      this.selectedGenre = null;
+      this.selectedDuration = null;
+      this.peliculas = [];
+      this.searching = false;
+      this.showFilters = false;
     }
-  });
-}
+  }
 
+  ngOnInit() { }
 
   async onSearchInput() {
     if (this.nombrePeli.trim().length >= 3) {
@@ -104,7 +115,8 @@ export class SearchPage implements OnInit {
 
       if (query) {
         res = await this.movieService.searchMovies(query, this.currentPage);
-      } else {
+      } 
+      else {
         res = await this.movieService.discoverMovies({
           ...this.buildFilterParams(),
           page: this.currentPage
@@ -242,7 +254,13 @@ export class SearchPage implements OnInit {
     this.selectedGenre = null;
     this.selectedMood = null;
     this.selectedDuration = null;
-
-    this.applyFilters();
+    this.peliculas = [];
+    this.searching = false;
+    //aqui limpiamos la url para que al volver no recargue el mood
+    this.router.navigate(['/tabs/search'], {
+      queryParams: {},
+      replaceUrl: true
+    });
   }
+
 }

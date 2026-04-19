@@ -39,33 +39,35 @@
     </div>
   </div>
 
-<div class="mood-map-section" *ngIf="!esInvitado && moodStats.length > 0">
-  <div class="header-chart">
-    <h3>Mapa emocional</h3>
-    <span class="subtitle">Basado en tus últimas películas</span>
-  </div>
+  <div class="mood-map-section" *ngIf="!esInvitado && moodStats.length > 0">
+    <div class="header-chart">
+      <h3>Mapa emocional</h3>
+      <span class="subtitle">{{ subtituloGrafica }}</span>
+    </div>
 
-  <div class="mood-chart">
-    <div class="mood-col" *ngFor="let m of moodStats; let i = index">
-      <div class="bar-count-badge">{{ m.count }}</div>
-      
-      <div class="bar-container">
-        <div class="bar-track">
-          <div class="bar-fill" 
-               [ngClass]="'bar-color-' + i" 
-               [style.height.%]="(m.count / 20) * 100">
-            <div class="bar-glare"></div>
+    <div class="mood-resumen" *ngIf="moodResumenMesAnterior">
+      {{ moodResumenMesAnterior.texto }}
+    </div>
+
+    <div class="mood-chart">
+      <div class="mood-col" *ngFor="let m of moodStats; let i = index">
+        <div class="bar-count-badge">{{ m.count }}</div>
+
+        <div class="bar-container">
+          <div class="bar-track">
+            <div class="bar-fill" [ngClass]="'bar-color-' + i" [style.height.%]="(m.count / 20) * 100">
+              <div class="bar-glare"></div>
+            </div>
           </div>
         </div>
-      </div>
-      
-      <div class="label-container">
-        <span class="bar-emoji">{{ m.emoji }}</span>
-        <span class="bar-label">{{ m.mood }}</span>
+
+        <div class="label-container">
+          <span class="bar-emoji">{{ m.emoji }}</span>
+          <span class="bar-label">{{ m.mood }}</span>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
   <div class="section" *ngIf="!esInvitado">
     <ion-item button (click)="verLista({id: -1, nombre: 'Mis Listas'})" lines="none" class="menu-item">
