@@ -54,6 +54,13 @@ export class ProfilePage implements OnInit {
     this.auth.bioActual$.subscribe(bio => this.descripcion = bio);
     this.auth.generoFavoritoActual$.subscribe(genero => this.generoFavorito = genero);
 
+    this.listaService.listaActualizada$.subscribe(() => {
+      const userId = this.auth.getUserId();
+      if (userId && !this.auth.isGuest()) {
+        this.cargarPerfil();
+      }
+    });
+
     this.username = this.auth.getUsername();
     const userId = this.auth.getUserId();
 
@@ -185,8 +192,8 @@ export class ProfilePage implements OnInit {
         `http://localhost:8080/listas/usuario/${userId}/peliculas`)
         .toPromise();
 
-      if (!peliculas){
-         return;
+      if (!peliculas) {
+        return;
       }
 
       const ahora = new Date();
@@ -196,16 +203,16 @@ export class ProfilePage implements OnInit {
       const anioAnterior = mesActual === 0 ? anioActual - 1 : anioActual;
 
       const pelisEsteMes = peliculas.filter(p => {
-        if (!p.fechaAñadida){
+        if (!p.fechaAñadida) {
           return false;
-        } 
+        }
         const fecha = new Date(p.fechaAñadida);
         return fecha.getMonth() === mesActual && fecha.getFullYear() === anioActual;
       });
 
       const pelisMesAnterior = peliculas.filter(p => {
-        if (!p.fechaAñadida){
-            return false;
+        if (!p.fechaAñadida) {
+          return false;
         }
         const fecha = new Date(p.fechaAñadida);
         return fecha.getMonth() === mesAnterior && fecha.getFullYear() === anioAnterior;
@@ -223,7 +230,7 @@ export class ProfilePage implements OnInit {
         pelisMesAnterior.forEach(p => {
           const k = p.mood?.toLowerCase();
           if (k && moodMapAnterior[k] !== undefined)
-             moodMapAnterior[k]++;
+            moodMapAnterior[k]++;
         });
 
         const maxCount = Math.max(...Object.values(moodMapAnterior));
@@ -239,10 +246,10 @@ export class ProfilePage implements OnInit {
           let texto = '';
           if (dominantes.length === 5) {
             texto = `¡El mes pasado te moviste por todos los moods por igual! · ${maxCount} película${maxCount !== 1 ? 's' : ''} cada uno`;
-          } 
+          }
           else if (dominantes.length === 1) {
             texto = `El mes pasado tu mood dominante fue ${dominantes[0].emoji} ${dominantes[0].mood} · ${maxCount} película${maxCount !== 1 ? 's' : ''}`;
-          } 
+          }
           else {
             const lista = dominantes.map(d => `${d.emoji} ${d.mood}`).join(' y ');
             texto = `El mes pasado empataron ${lista} · ${maxCount} película${maxCount !== 1 ? 's' : ''} cada uno`;
@@ -273,10 +280,10 @@ export class ProfilePage implements OnInit {
 
       this.subtituloGrafica = pelisEsteMes.length > 0 ? 'Este mes' : 'Mes anterior';
 
-    } 
+    }
     catch (error) {
       console.error('Error al cargar mood stats:', error);
     }
   }
-  
+
 }

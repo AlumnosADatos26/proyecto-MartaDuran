@@ -91,6 +91,7 @@ export class ListMoviesPage implements OnInit {
           text: 'Quitar',
           handler: async () => {
             await this.listaService.deletePelicula(this.listaId, peli.id);
+            this.listaService.listaActualizada$.next(); //notifica
             await this.cargarPeliculas();
 
             setTimeout(async () => {  // para esperarun poco para que el alert se cierre antes del toast
@@ -104,7 +105,7 @@ export class ListMoviesPage implements OnInit {
             }, 400);
           }
         }
-      ], 
+      ],
       cssClass: 'alert-moderno'
     });
 

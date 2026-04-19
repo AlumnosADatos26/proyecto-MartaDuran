@@ -17,7 +17,7 @@ import { arrowBackOutline, globeOutline, lockClosedOutline, personCircleOutline,
   imports: [IonicModule, CommonModule]
 })
 export class MyCommentsPage implements OnInit {
-  
+
   comentarios: any[] = [];
 
   constructor(
@@ -26,10 +26,12 @@ export class MyCommentsPage implements OnInit {
     private router: Router,
     private navCtrl: NavController
   ) {
-    addIcons({ arrowBackOutline, globeOutline, lockClosedOutline, personCircleOutline, chatbubblesOutline });  
+    addIcons({ arrowBackOutline, globeOutline, lockClosedOutline, personCircleOutline, chatbubblesOutline });
   }
 
-  async ngOnInit() {
+  async ngOnInit() { }
+
+  async ionViewWillEnter() {
     const userId = this.auth.getUserId();
     if (userId) {
       this.comentarios = await this.comentarioService.getComentariosPorUsuario(userId);
@@ -40,8 +42,8 @@ export class MyCommentsPage implements OnInit {
     this.router.navigate(['/movie-details'], { queryParams: { id: tmdbId } });
   }
 
-  goBack() { 
-    this.navCtrl.back(); 
+  goBack() {
+    this.navCtrl.back();
   }
 
 }

@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './authService';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,8 @@ export class ListaService {
     private http: HttpClient,
     private auth: AuthService
   ) { }
+
+  listaActualizada$ = new Subject<void>();
 
   // Cabeceras con el token JWT para peticiones autenticadas
   private getHeaders() {
