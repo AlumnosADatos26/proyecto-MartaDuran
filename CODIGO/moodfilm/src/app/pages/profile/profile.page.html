@@ -70,13 +70,13 @@
   </div>
 
   <div class="section" *ngIf="!esInvitado">
-    <ion-item button (click)="verLista({id: -1, nombre: 'Mis Listas'})" lines="none" class="menu-item">
+    <ion-item button (click)="irAMisListas()" lines="none" class="menu-item">
       <div class="menu-icon-box" slot="start">
         <ion-icon name="bookmark-outline"></ion-icon>
       </div>
       <ion-label>
         <h3>Mis Listas</h3>
-        <p>Ver todas tus listas</p>
+        <p>Tus colecciones personales</p>
       </ion-label>
       <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
     </ion-item>

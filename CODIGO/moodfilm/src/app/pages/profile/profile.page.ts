@@ -38,7 +38,7 @@ export class ProfilePage implements OnInit {
   constructor(
     private auth: AuthService,
     private listaService: ListaService,
-    private router: Router,
+    public router: Router,
     private comentarioService: ComentarioService,
     private http: HttpClient
   ) {
@@ -122,18 +122,22 @@ export class ProfilePage implements OnInit {
     this.email = this.auth.getEmail();
 
     const userId = this.auth.getUserId();
-    if (!userId) {
-      return;
-    }
+    if (!userId) return;
 
     try {
-      this.listas = await this.listaService.getListas(userId);
-      this.totalListas = this.listas.length;
+      const todasLasListas = await this.listaService.getListas(userId);
+
+      this.totalListas = todasLasListas.length;
+      this.listas = todasLasListas.filter((l: any) =>
+        l.nombre === 'Favoritas' ||
+        l.nombre === 'Vistas' ||
+        l.nombre === 'Por ver'
+      );
 
       let vistas = 0;
       let favs = 0;
 
-      for (const lista of this.listas) {
+      for (const lista of todasLasListas) {
         const peliculas = await this.listaService.getPeliculasDeLista(lista.id);
         if (lista.nombre === 'Vistas') {
           vistas = peliculas.length;
@@ -152,7 +156,6 @@ export class ProfilePage implements OnInit {
       console.error('Error al cargar perfil:', error);
     }
   }
-
 
   verLista(lista: any) {
     this.router.navigate(['/list-movies'], {
@@ -284,6 +287,10 @@ export class ProfilePage implements OnInit {
     catch (error) {
       console.error('Error al cargar mood stats:', error);
     }
+  }
+
+  irAMisListas() {
+    this.router.navigate(['/my-lists']);
   }
 
 }

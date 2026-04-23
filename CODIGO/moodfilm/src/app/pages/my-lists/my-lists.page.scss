@@ -1,0 +1,147 @@
+.glass-container {
+  padding: 20px;
+  background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+  min-height: 100%;
+}
+
+.welcome-header {
+  margin-bottom: 30px;
+  h1 {
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: #2d3436;
+    margin: 0;
+  }
+  .line-decorator {
+    width: 50px;
+    height: 6px;
+    background: #8e24aa;
+    border-radius: 10px;
+    margin-top: 8px;
+  }
+}
+
+.list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/*Estilo de las tarjetas */
+.glass-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  background: white;
+  border-radius: 25px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.04);
+  margin-bottom: 5px;
+  min-height: 95px;
+  width: 100%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideIn 0.4s ease forwards;
+
+  &:active {
+    transform: scale(0.98);
+    background: #f8f9fa;
+  }
+
+  /*  contenedor principal  */
+  .item-main {
+    display: flex;
+    align-items: center;
+    flex: 1; 
+    min-width: 0; //estopermite que el texto se trunque
+    padding: 15px 0;
+  }
+
+  .index-number {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #8e24aa;
+    opacity: 0.5;
+    margin-right: 15px;
+  }
+
+
+  .item-info {
+    flex: 1;
+    min-width: 0;
+    margin-right: 10px;
+
+    h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #2d3436;
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%; 
+    }
+
+    p {
+      margin: 2px 0 0 0;
+      font-size: 0.85rem;
+      color: #b2bec3;
+    }
+  }
+
+  /*para el lapiz y la papelera */
+  .item-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0; 
+    align-items: center;
+  }
+
+  .btn-action {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    font-size: 1.3rem;
+    transition: all 0.2s;
+
+    &.edit {
+      color: #8e24aa;
+      background: rgba(142, 36, 170, 0.08);
+      &:active { background: rgba(142, 36, 170, 0.15); }
+    }
+
+    &.delete {
+      color: #ff5252;
+      background: rgba(255, 82, 82, 0.08);
+      &:active { background: rgba(255, 82, 82, 0.15); }
+    }
+  }
+}
+
+/* boton flotante para crear una nueva ñista*/
+.fab-custom {
+  --background: #2d3436;
+  --background-activated: #000;
+  --color: white;
+  --box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  
+  ion-icon {
+    font-size: 24px;
+  }
+}
+
+.empty-state-minimal {
+  text-align: center;
+  margin-top: 100px;
+  color: #b2bec3;
+  font-weight: 500;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

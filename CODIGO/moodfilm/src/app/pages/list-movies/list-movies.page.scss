@@ -1,23 +1,66 @@
 .movie-card {
   margin: 4px;
+  border-radius: 12px;    
+  box-shadow: 0 6px 15px rgba(0,0,0,0.12); 
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
 
   img {
     width: 100%;
     aspect-ratio: 2/3;    // proporción de póster de película
     object-fit: cover;
   }
+
+   &:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
 }
 
 ion-card-title {
-  font-size: 13px;
+  font-size: 15px;
   white-space: normal;
   overflow-wrap: break-word;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+   font-weight: 700;       
+  color: #1a1a1a;
 }
 
 ion-col {
   padding: 4px;
+}
+
+ion-card-header {
+  padding: 10px 12px 4px; 
+}
+
+ion-card-content {
+  padding: 4px 12px 12px; 
+}
+
+:host {
+  --fondo-lista: #f5f5f5; 
+}
+
+ion-content.lista-favoritas {
+  --background: linear-gradient(135deg, #ff9a9e 0%, #ce48a4 25%, #c0166e 60%, #6b0f3a 100%);
+}
+
+ion-content.lista-vistas {
+  --background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 25%, #3ebb90 60%, #0a5c4a 100%);
+}
+
+ion-content.lista-por-ver {
+  --background: linear-gradient(135deg, #fff176 0%, #ffd600 25%, #ff8f00 60%, #e65100 100%);
+}
+
+ion-content.lista-custom {
+  --background: linear-gradient(135deg, #a18cd1 0%, #7c3aed 25%, #4f1b8c 60%, #1a0533 100%);
 }

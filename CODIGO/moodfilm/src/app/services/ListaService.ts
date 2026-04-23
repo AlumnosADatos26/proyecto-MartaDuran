@@ -49,4 +49,22 @@ export class ListaService {
     return firstValueFrom(this.http.delete(url, { headers: this.getHeaders() }));
   }
 
+  crearLista(usuarioId: number, nombre: string): Promise<any> {
+    const url = `${environment.apiBaseUrl}/listas/usuario/${usuarioId}`;
+    return firstValueFrom(this.http.post(url, { nombre }, { headers: this.getHeaders() }));
+  }
+
+  eliminarLista(listaId: number): Promise<any> {
+    const url = `${environment.apiBaseUrl}/listas/${listaId}`;
+    return firstValueFrom(this.http.delete(url, { headers: this.getHeaders() }));
+  }
+
+  // editamos el nombre de una lista existente
+  editarLista(listaId: number, nuevoNombre: string): Promise<any> {
+    const url = `${environment.apiBaseUrl}/listas/${listaId}`;
+    return firstValueFrom(
+      this.http.put(url, { nombre: nuevoNombre }, { headers: this.getHeaders() })
+    );
+  }
+
 }

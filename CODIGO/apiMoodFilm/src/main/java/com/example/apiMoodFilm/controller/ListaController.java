@@ -8,7 +8,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/listas")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:8100", allowedHeaders = "*", methods = {RequestMethod.GET,
+    RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class ListaController {
 
     private final ListaService listaService;
@@ -50,6 +51,25 @@ public class ListaController {
     @GetMapping("/usuario/{usuarioId}/peliculas")
     public List<ListaPelicula> obtenerPeliculasDeUsuario(@PathVariable Long usuarioId) {
         return listaService.obtenerPeliculasDeUsuario(usuarioId);
+    }
+
+    @PostMapping("/usuario/{usuarioId}")
+    public ListaDTO crearLista(@PathVariable Long usuarioId,
+            @RequestBody java.util.Map<String, String> body) {
+        com.example.apiMoodFilm.model.Lista nuevaLista = listaService.crearLista(usuarioId, body.get("nombre"));
+        return new ListaDTO(nuevaLista.getId(), nuevaLista.getNombre(), nuevaLista.getUsuario().getId());
+    }
+
+    @DeleteMapping("/{listaId}")
+    public void eliminarLista(@PathVariable Long listaId) {
+        listaService.eliminar(listaId);
+    }
+
+    @PutMapping("/{listaId}")
+    public ListaDTO actualizarLista(@PathVariable Long listaId,
+            @RequestBody java.util.Map<String, String> body) {
+        com.example.apiMoodFilm.model.Lista listaActualizada = listaService.actualizarNombre(listaId, body.get("nombre"));
+        return new ListaDTO(listaActualizada.getId(), listaActualizada.getNombre(), listaActualizada.getUsuario().getId());
     }
 
 }

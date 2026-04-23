@@ -112,5 +112,13 @@ export class ListMoviesPage implements OnInit {
     await alert.present();
   }
 
+  getListaClass(): string {
+    const nombre = this.nombreLista.toLowerCase();
+    if (nombre === 'favoritas') return 'lista-favoritas';
+    if (nombre === 'vistas') return 'lista-vistas';
+    if (nombre === 'por ver') return 'lista-por-ver';
+    return 'lista-custom';
+  }
+
 
 }

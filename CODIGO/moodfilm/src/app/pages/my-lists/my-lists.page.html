@@ -1,0 +1,52 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/profile"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mis Listas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="glass-container">
+
+    <div class="welcome-header">
+      <h1>Tus Bibliotecas</h1>
+      <div class="line-decorator"></div>
+    </div>
+
+    <div class="list-wrapper">
+      <div class="glass-item" *ngFor="let lista of listasPersonales; let i = index">
+
+        <div class="item-main" (click)="verLista(lista)">
+          <div class="index-number">0{{i + 1}}</div>
+
+          <div class="item-info">
+            <h2>{{ lista.nombre }}</h2>
+            <p>{{ lista.contador }} películas</p>
+          </div>
+        </div>
+        
+        <div class="item-actions">
+          <div class="btn-action edit" (click)="editarLista(lista)">
+            <ion-icon name="create-outline"></ion-icon>
+          </div>
+          <div class="btn-action delete" (click)="eliminarLista(lista)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="empty-state-minimal" *ngIf="listasPersonales.length === 0">
+      <p>Vacío. Dale al botón para empezar.</p>
+    </div>
+  </div>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button class="fab-custom" (click)="nuevaLista()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

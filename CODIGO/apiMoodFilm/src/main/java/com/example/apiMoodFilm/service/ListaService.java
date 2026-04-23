@@ -2,6 +2,7 @@ package com.example.apiMoodFilm.service;
 
 import com.example.apiMoodFilm.model.Lista;
 import com.example.apiMoodFilm.model.ListaPelicula;
+import com.example.apiMoodFilm.model.Usuario;
 import com.example.apiMoodFilm.repository.ListaPeliculaRepository;
 import com.example.apiMoodFilm.repository.ListaRepository;
 import org.springframework.stereotype.Service;
@@ -73,4 +74,38 @@ public class ListaService {
                 .flatMap(lista -> listaPeliculaRepository.findByListaId(lista.getId()).stream())
                 .collect(java.util.stream.Collectors.toList());
     }
+
+    public Lista crearLista(Long usuarioId, String nombre) {
+        // evitamos nombres duplicados para el mismo usuario
+        List<Lista> existentes = listaRepository.findByUsuarioId(usuarioId);
+        boolean yaExiste = existentes.stream()
+                .anyMatch(l -> l.getNombre().equalsIgnoreCase(nombre));
+        if (yaExiste) {
+            throw new RuntimeException("Ya tienes una lista con ese nombre");
+        }
+
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+
+        Lista lista = new Lista();
+        lista.setNombre(nombre);
+        lista.setUsuario(usuario);
+        return listaRepository.save(lista);
+    }
+
+    public Lista actualizarNombre(Long listaId, String nuevoNombre) {
+        Lista lista = listaRepository.findById(listaId)
+                .orElseThrow(() -> new RuntimeException("Lista no encontrada"));
+
+        // validamos que el usuario no tenga otra lista con el mismo nombre
+        boolean yaExiste = listaRepository.findByUsuarioId(lista.getUsuario().getId()).stream()
+                .anyMatch(l -> l.getNombre().equalsIgnoreCase(nuevoNombre) && !l.getId().equals(listaId));
+
+        if (yaExiste) {
+            throw new RuntimeException("Ya tienes otra lista con ese nombre");
+        }
+        lista.setNombre(nuevoNombre);
+        return listaRepository.save(lista);
+    }
+
 }
