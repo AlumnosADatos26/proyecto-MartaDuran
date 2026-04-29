@@ -1,14 +1,13 @@
-
-
 ion-content {
-  --background: none; /* reseteamos posibles conflictos */
+  --background: none;
+  /* reseteamos posibles conflictos */
   background: radial-gradient(circle at top left,
-          rgba(253, 177, 37, 0.914),
-          transparent 40%),
-      radial-gradient(circle at bottom right,
-          rgba(150, 53, 219, 0.645),
-          transparent 45%),
-      linear-gradient(135deg, #ead029, #6A0DAD);
+      rgba(253, 177, 37, 0.914),
+      transparent 40%),
+    radial-gradient(circle at bottom right,
+      rgba(150, 53, 219, 0.645),
+      transparent 45%),
+    linear-gradient(135deg, #ead029, #6A0DAD);
 }
 
 ion-row {
@@ -28,7 +27,8 @@ ion-col {
 
 .load-more-button {
   display: flex;
-  justify-content: center;  /* centra horizontal */
+  justify-content: center;
+  /* centra horizontal */
   align-items: center;
   margin: 24px 0;
 }
@@ -56,7 +56,7 @@ ion-card:hover {
   align-items: center;
   font-weight: 500;
   font-size: 0.9rem;
-  color:black
+  color: black
 }
 
 ion-card {
@@ -69,9 +69,11 @@ ion-card-content {
 }
 
 ion-card-title {
-  min-height: 48px;   /* espacio para 2 líneas */
+  min-height: 48px;
+  /* espacio para 2 líneas */
   display: -webkit-box;
-  -webkit-line-clamp: 2;   /* máximo 2 líneas */
+  -webkit-line-clamp: 2;
+  /* máximo 2 líneas */
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -86,7 +88,7 @@ ion-card-title {
   font-weight: 700;
   color: white;
   margin-bottom: 16px;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .mood-row {
@@ -108,7 +110,7 @@ ion-card-title {
     font-size: 12px;
     font-weight: 600;
     color: white;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   }
 
   &:active {
@@ -120,9 +122,9 @@ ion-card-title {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(8px);
-  border: 2px solid rgba(255,255,255,0.35);
+  border: 2px solid rgba(255, 255, 255, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -130,7 +132,7 @@ ion-card-title {
   transition: background 0.2s, transform 0.2s;
 
   &:hover {
-    background: rgba(255,255,255,0.35);
+    background: rgba(255, 255, 255, 0.35);
     transform: translateY(-3px);
   }
 }
@@ -140,41 +142,49 @@ ion-card-title {
   font-weight: 700;
   color: white;
   padding: 8px 16px 0;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 //BTN del dado
 .btn-sorpresa {
-  --background: linear-gradient(135deg, #ffce00, #ff8c00) !important;
-  --color: #1a1a2e !important;
-  --border-radius: 30px !important;
-  --border-style: none !important;
-  --background-hover: linear-gradient(135deg, #ffe066, #ff9d26) !important;
-  --background-hover-opacity: 1 !important;
-  --background-focused: #ffce00 !important;
-  --background-activated: #ff8c00 !important;
+  --background: transparent !important;
+  --background-hover: transparent !important;
+  --background-activated: transparent !important;
+  --background-focused: transparent !important;
+  --ripple-color: transparent !important;
+  --box-shadow: none !important;
+  --border-width: 0 !important;
 
+  background: transparent !important;
   margin: 10px;
   height: 52px;
-  min-width: 175px;
-  border: none !important;
-  box-shadow: 0 8px 20px rgba(255, 140, 0, 0.4);
+  min-width: 180px;
 
-  ion-icon {
-    font-size: 22px;
-    margin-right: 8px;
-  }
-
+  ion-icon,
   span {
-    font-weight: 850;
-    font-size: 15px;
+    color: #1a1a2e !important;
+    position: relative;
+    z-index: 2;
   }
 }
 
 .btn-sorpresa::part(native) {
+  background: linear-gradient(135deg, #ffce00, #ff8c00) !important;
+  border-radius: 30px !important;
   border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(255, 140, 0, 0.4) !important;
+  overflow: hidden;
+}
+
+.btn-sorpresa:hover::part(native) {
+  background: linear-gradient(135deg, #ffe066, #ff9d26) !important;
+  box-shadow: 0 10px 25px rgba(255, 140, 0, 0.6) !important;
+}
+
+.btn-sorpresa:active::part(native) {
+  background: #ff8c00 !important;
+  transform: scale(0.95);
 }
 
 .fab-hidden {
@@ -185,7 +195,7 @@ ion-card-title {
 .surprise-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(40, 10, 75, 0.9) !important; /* Morado profundo saturado */
+  background: rgba(40, 10, 75, 0.9) !important;
   z-index: 2000;
   backdrop-filter: blur(12px);
 }
@@ -196,7 +206,7 @@ ion-card-title {
   left: 0;
   right: 0;
   z-index: 2001;
-  background: #240b45; /* Fondo morado uva muy oscuro */
+  background: #240b45;
   min-height: 240px;
   border-radius: 28px 28px 0 0;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -294,6 +304,11 @@ ion-card-title {
 }
 
 @keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
 }

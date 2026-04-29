@@ -12,7 +12,8 @@ export class AuthService {
     bioActual$ = this.bioSubject.asObservable();
     private generoFavoritoSubject = new BehaviorSubject<string>(localStorage.getItem('generoFavorito') || '');
     generoFavoritoActual$ = this.generoFavoritoSubject.asObservable();
-
+    private usernameSubject = new BehaviorSubject<string>(localStorage.getItem('username') || 'Usuario');
+    usernameActual$ = this.usernameSubject.asObservable();
 
     saveToken(token: string) {
         localStorage.setItem('token', token);
@@ -53,7 +54,7 @@ export class AuthService {
     saveUserInfo(username: string, email: string) {
         localStorage.setItem('username', username);
         localStorage.setItem('email', email);
-
+        this.usernameSubject.next(username); 
     }
 
     getUsername(): string {
@@ -69,18 +70,15 @@ export class AuthService {
         return localStorage.getItem('fotoPerfil');
     }
 
-    saveFotoPerfil(foto: string | null) {
+    saveFotoPerfil(foto: string | null ) {
         if (foto) {
             localStorage.setItem('fotoPerfil', foto);
-        } else {
+        } 
+        else {
             localStorage.removeItem('fotoPerfil');
         }
-        this.fotoSubject.next(foto); // <--- ESTO es lo que refresca las pantallas
-    }
+        this.fotoSubject.next(foto); 
 
-
-    saveUsername(username: string) {
-        localStorage.setItem('username', username);
     }
 
     setGuest() {
@@ -111,4 +109,12 @@ export class AuthService {
     getGeneroFav(): string {
         return localStorage.getItem('generoFavorito') || '';
     }
+
+    saveUsername(username: string) {
+    localStorage.setItem('username', username);
+    this.usernameSubject.next(username); 
+}
+
+
+
 }

@@ -6,6 +6,7 @@ import com.example.apiMoodFilm.model.Usuario;
 import com.example.apiMoodFilm.service.AuthService;
 import org.springframework.web.bind.annotation.*;
 import com.example.apiMoodFilm.dto.AuthResponse;
+import com.example.apiMoodFilm.dto.GoogleAuthRequest;
 
 @RestController
 @RequestMapping("/auth")
@@ -31,4 +32,9 @@ public class AuthController {
         );
     }
 
+    @PostMapping("/google")
+    public AuthResponse googleLogin(@RequestBody GoogleAuthRequest request) {
+        return authService.loginWithGoogle(request.getToken());
+    }
+    
 }

@@ -50,7 +50,8 @@
       </div>
     </div>
 
-    <ion-button expand="block" (click)="guardarCambios()" class="btn-save">
+    <ion-button expand="block" (click)="guardarCambios()" class="btn-save"
+      [disabled]="!username || username.trim() === ''">
       GUARDAR CAMBIOS
     </ion-button>
   </div>

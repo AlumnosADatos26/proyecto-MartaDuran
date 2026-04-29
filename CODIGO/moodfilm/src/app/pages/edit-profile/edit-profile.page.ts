@@ -28,14 +28,14 @@ export class EditProfilePage implements OnInit {
 
   // Control de proveedor (google vs local)
   proveedor = 'local';
-  readonly TOTAL_AVATARES = 9;
+  readonly TOTAL_AVATARES = 17;
 
   avatares = Array.from(
     { length: this.TOTAL_AVATARES },
     (_, i) => `assets/avatars/avatar${i + 1}.png`
   );
 
-  
+
   constructor(
     private auth: AuthService,
     private http: HttpClient,
@@ -77,11 +77,20 @@ export class EditProfilePage implements OnInit {
 
 
   async guardarCambios() {
-
     const userId = this.auth.getUserId();
-    if (!userId) return;
+    if (!userId) {
+      this.mostrarToast('Sesión no válida');
+      return;
+    }
 
-    //validación de contraseña solo si es local y escribió algo
+    //nombre de usuario obligatorio
+    // yusamos trim() para evitar que el usuario ponga solo espacios
+    if (!this.username || this.username.trim().length === 0) {
+      this.mostrarToast('El nombre de usuario no puede estar vacío');
+      return; // Detiene la ejecución
+    }
+
+    //contraseña (solo si el proveedor es local y hay texto)
     if (this.proveedor === 'local' && this.password) {
       if (this.password !== this.confirmPassword) {
         this.mostrarToast('Las contraseñas no coinciden');
@@ -89,21 +98,23 @@ export class EditProfilePage implements OnInit {
       }
     }
 
-    //el objeto que espera UsuarioController
+    //preparacion del body:
     const body = {
-      username: this.username,
+      username: this.username.trim(), // enviamos el nombre sin espacios 
       fotoPerfil: this.fotoSeleccionada,
-      bio: this.bio,
+      bio: this.bio ? this.bio.trim() : '',
       generoFavorito: this.generoFavorito,
-      password: this.password || null //si está vacío java lo ignorará
+      password: this.password || null
     };
 
+    //peticin al backend:
     this.http.put(`http://localhost:8080/usuarios/${userId}`, body)
       .subscribe({
         next: () => {
-          this.auth.saveUsername(this.username);
-          this.auth.saveBio(this.bio);
-          this.auth.saveGeneroFav(this.generoFavorito);
+          //actualizamos el storage local para que los cambios se vean en toda la app
+          this.auth.saveUsername(body.username);
+          this.auth.saveBio(body.bio);
+          this.auth.saveGeneroFav(body.generoFavorito);
 
           if (this.fotoSeleccionada) {
             this.auth.saveFotoPerfil(this.fotoSeleccionada);
@@ -112,12 +123,13 @@ export class EditProfilePage implements OnInit {
             localStorage.removeItem('fotoPerfil');
           }
 
+          // Redirigimos al perfil
           this.router.navigate(['/tabs/profile'], { replaceUrl: true });
         },
 
         error: (err) => {
-          console.error(err);
-          this.mostrarToast('Error al guardar los cambios');
+          console.error('Error al actualizar:', err);
+          this.mostrarToast('Error al conectar con el servidor');
         }
       });
   }

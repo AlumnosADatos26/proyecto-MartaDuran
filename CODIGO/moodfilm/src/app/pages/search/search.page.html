@@ -79,13 +79,14 @@
 
   <ion-grid *ngIf="peliculas.length > 0">
     <ion-row>
-      <ion-col size="6" size-md="4" size-lg="3" *ngFor="let peli of peliculas">
+      <ion-col size="12" size-sm="6" size-md="4" size-lg="3" *ngFor="let peli of peliculas">
+
         <ion-card (click)="verFicha(peli)" class="movie-card">
           <div class="poster-container">
             <img [src]="getImageUrl(peli.poster_path)" [alt]="peli.title">
             <div class="rating-badge" *ngIf="peli.vote_average >= 0">
               <ion-icon name="star"></ion-icon>
-              ⭐ {{ peli.vote_average | number:'1.1-1' }}
+              {{ peli.vote_average | number:'1.1-1' }}
             </div>
           </div>
           <ion-card-header>
@@ -95,10 +96,11 @@
             </ion-chip>
           </ion-card-header>
         </ion-card>
+
       </ion-col>
     </ion-row>
   </ion-grid>
-
+  
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)" *ngIf="currentPage < totalPages">
     <ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Cargando más películas...">
     </ion-infinite-scroll-content>

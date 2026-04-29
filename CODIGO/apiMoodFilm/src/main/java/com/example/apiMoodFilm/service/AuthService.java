@@ -18,19 +18,27 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final ListaRepository listaRepository;
+    private final GoogleTokenVerifier googleTokenVerifier;
 
     public AuthService(UsuarioRepository usuarioRepository,
             PasswordEncoder passwordEncoder,
             JwtUtil jwtUtil,
-            ListaRepository listaRepository) {
+            ListaRepository listaRepository,
+            GoogleTokenVerifier googleTokenVerifier) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.listaRepository = listaRepository;
+        this.googleTokenVerifier = googleTokenVerifier;
     }
 
     public Usuario register(RegisterRequest request) {
         if (usuarioRepository.existsByEmail(request.getEmail())) {
+            // comprobamos si ya existe con google 
+            Usuario existente = usuarioRepository.findByEmail(request.getEmail()).orElse(null);
+            if (existente != null && existente.getProveedor() == AuthProvider.GOOGLE) {
+                throw new RuntimeException("Este email ya está registrado con Google. Usa el botón 'Continuar con Google'.");
+            }
             throw new RuntimeException("El email ya existe");
         }
 
@@ -42,7 +50,7 @@ public class AuthService {
 
         Usuario nuevoUsuario = usuarioRepository.save(usuario);
 
-        //añadimosesto para crear las tres listas por defecto
+        
         String[] listasPorDefecto = {"Favoritas", "Por ver", "Vistas"};
         for (String nombre : listasPorDefecto) {
             Lista lista = new Lista();
@@ -77,4 +85,60 @@ public class AuthService {
         );
     }
 
+    public AuthResponse loginWithGoogle(String googleToken) {
+        GoogleTokenVerifier.GoogleUserInfo userInfo = googleTokenVerifier.verify(googleToken);
+
+        String email = userInfo.email;
+        String nombre = userInfo.name;
+        String foto = userInfo.picture;
+
+        Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
+
+        if (usuario == null) {
+            usuario = new Usuario();
+            usuario.setEmail(email);
+
+            //generamos un username único para evitar duplicados
+            String baseUsername = email.split("@")[0]; 
+            String username = baseUsername;
+
+            //y si ya existe ese username, añadimos numeros al final hasta que sea único
+            int intento = 1;
+            while (usuarioRepository.existsByUsername(username)) {
+                username = baseUsername + intento;
+                intento++;
+            }
+
+            usuario.setUsername(username);
+            usuario.setFotoPerfil(null);
+            usuario.setProveedor(AuthProvider.GOOGLE);
+            usuario.setPassword("");
+
+            Usuario nuevoUsuario = usuarioRepository.save(usuario);
+
+            String[] listasPorDefecto = {"Favoritas", "Por ver", "Vistas"};
+            for (String nombreLista : listasPorDefecto) {
+                Lista lista = new Lista();
+                lista.setNombre(nombreLista);
+                lista.setUsuario(nuevoUsuario);
+                listaRepository.save(lista);
+            }
+            usuario = nuevoUsuario;
+
+        } 
+        else if (usuario.getProveedor() == AuthProvider.LOCAL) {
+            throw new RuntimeException("Este email ya está registrado con contraseña. Usa el login normal.");
+        }
+
+        String token = jwtUtil.generateToken(usuario);
+        return new AuthResponse(
+                token,
+                usuario.getId(),
+                usuario.getUsername(),
+                usuario.getEmail(),
+                usuario.getFotoPerfil(),
+                usuario.getBio(),
+                usuario.getGeneroFavorito()
+        );
+    }
 }

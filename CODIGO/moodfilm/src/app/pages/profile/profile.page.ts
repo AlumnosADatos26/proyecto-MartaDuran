@@ -53,6 +53,7 @@ export class ProfilePage implements OnInit {
     this.auth.fotoActual$.subscribe(foto => this.fotoPerfil = foto);
     this.auth.bioActual$.subscribe(bio => this.descripcion = bio);
     this.auth.generoFavoritoActual$.subscribe(genero => this.generoFavorito = genero);
+    this.auth.usernameActual$.subscribe(name => this.username = name);
 
     this.listaService.listaActualizada$.subscribe(() => {
       const userId = this.auth.getUserId();
@@ -78,7 +79,6 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.fotoPerfil = this.auth.isGuest() ? null : this.auth.getFotoPerfil();
     this.cargarPerfil();
     this.cargarDatosBackend();
 

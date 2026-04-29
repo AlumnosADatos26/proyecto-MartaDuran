@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -9,6 +9,8 @@ import { addIcons } from 'ionicons';
 import { mailOutline, lockClosedOutline } from 'ionicons/icons';
 import { NavController } from '@ionic/angular';
 
+declare const google: any;
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -16,11 +18,14 @@ import { NavController } from '@ionic/angular';
   standalone: true,
   imports: [IonicModule, FormsModule, CommonModule]
 })
-export class LoginPage {
+export class LoginPage implements OnInit {
 
   email = '';
   password = '';
   private returnUrl: string = '/tabs/discover';
+  private googleInitialized = false;
+
+  ngOnInit() { }
 
   constructor(
     private http: HttpClient,
@@ -28,19 +33,40 @@ export class LoginPage {
     private auth: AuthService,
     private route: ActivatedRoute,
     private navCtrl: NavController
-
   ) {
     addIcons({ mailOutline, lockClosedOutline });
   }
 
-  //limpiamos los campos y recogemos returnUrl cada vez que se entra
   ionViewWillEnter() {
     this.email = '';
     this.password = '';
     this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/tabs/discover';
+
+    if (!this.googleInitialized) {
+      google.accounts.id.initialize({
+        client_id: '1015555906160-nk052b4objv9a1rnnvsgn6iouv1i66hr.apps.googleusercontent.com',
+        callback: (response: any) => this.handleGoogleResponse(response)
+      });
+      this.googleInitialized = true;
+    }
+
+    setTimeout(() => {
+      const container = document.getElementById('google-btn-container');
+      if (container) {
+        container.innerHTML = '';
+        google.accounts.id.renderButton(container, {
+          type: 'standard',
+          shape: 'rectangular',
+          theme: 'outline',
+          text: 'continue_with',
+          size: 'large',
+          locale: 'es',
+          width: container.offsetWidth || 300
+        });
+      }
+    }, 100);
   }
 
-  // login local con email y contraseña
   login() {
     this.http.post<any>('http://localhost:8080/auth/login', {
       email: this.email,
@@ -53,12 +79,11 @@ export class LoginPage {
         this.auth.saveBio(res.bio || '');
         this.auth.saveGeneroFav(res.generoFavorito || '');
 
-        // siempre sincroniza, aunque sea null (limpia foto de sesión anterior)
         if (res.fotoPerfil) {
           this.auth.saveFotoPerfil(res.fotoPerfil);
         } 
         else {
-          localStorage.removeItem('fotoPerfil'); //limpia si esta cuenta no tiene foto
+          localStorage.removeItem('fotoPerfil');
         }
 
         let destino = this.returnUrl;
@@ -68,7 +93,7 @@ export class LoginPage {
         }
         this.navCtrl.navigateRoot(destino);
       },
-
+      
       error: (err) => {
         console.error('Error al iniciar sesion:', err);
         alert('Email o contraseña incorrectos');
@@ -76,21 +101,43 @@ export class LoginPage {
     });
   }
 
-  // Login con google (falta implementarlo)
-  loginGoogle() {
-    alert('Login con Google próximamente');
+  handleGoogleResponse(response: any) {
+    const idToken = response.credential;
+
+    this.http.post<any>('http://localhost:8080/auth/google', 
+      { token: idToken
+    }).subscribe({
+      next: (res) => {
+        this.auth.saveToken(res.token);
+        this.auth.saveUserId(res.userId);
+        this.auth.saveUserInfo(res.username, res.email);
+        this.auth.saveBio(res.bio || '');
+        this.auth.saveGeneroFav(res.generoFavorito || '');
+
+        if (res.fotoPerfil) {
+          this.auth.saveFotoPerfil(res.fotoPerfil);
+        } 
+        else {
+          localStorage.removeItem('fotoPerfil');
+        }
+
+        this.navCtrl.navigateRoot(this.returnUrl);
+      },
+      
+      error: (err) => {
+        console.error('Error login Google:', err);
+        const mensaje = err?.error?.message || err?.error || 'Error al iniciar sesión con Google';
+        alert(mensaje);
+      }
+    });
   }
 
-  // entrar sin cuenta
   loginGuest() {
     this.auth.setGuest();
     this.router.navigate(['/tabs/discover']);
   }
 
-  //ir a la pantalla de registro
   goToRegister() {
     this.router.navigate(['/register']);
   }
-
-  
 }
