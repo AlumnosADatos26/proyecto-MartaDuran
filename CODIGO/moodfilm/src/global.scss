@@ -34,14 +34,17 @@
 
 ////////////////////////
 
-//para el stilo de todos los toast:
+//cambiamos la fuente de toda la app:
+* { 
+  font-family: 'Poppins', sans-serif !important; 
+}
 
 .toast-moderno {
   // primero itamos el fondo negro
   --background: transparent;
   --box-shadow: none;
   //subimos el toast
-  --margin-bottom: 20vh; 
+  --margin-bottom: 20vh;
 
   &::part(container) {
     // forzamos el tamaño para que no sea invisible
@@ -51,11 +54,11 @@
     margin: 0 auto; // ylo centramos horizontalmente
 
 
-    background: rgba(19, 18, 18, 0.678); 
+    background: rgba(19, 18, 18, 0.678);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    
-    border-radius: 50px; 
+
+    border-radius: 50px;
     padding: 10px 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(0, 0, 0, 0.05);
@@ -63,7 +66,7 @@
 
   &::part(message) {
     //Letras blancas que resaltan
-    color: #ffffff !important; 
+    color: #ffffff !important;
     font-size: 14px;
     font-weight: 500;
     text-align: center;
@@ -77,13 +80,14 @@
 
 //para el estilo de todos los alerts:
 
-.ios.alert-moderno, .md.alert-moderno {
+.ios.alert-moderno,
+.md.alert-moderno {
   //fondo de la pantalla 
   backdrop-filter: blur(4px);
   background-color: rgba(0, 0, 0, 0.5);
 
   &::part(wrapper) {
-    background: #ffffff !important; 
+    background: #ffffff !important;
     border-radius: 25px !important;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
     overflow: hidden !important;
@@ -93,12 +97,12 @@
   // HEADER: de color sólido 
   .alert-head {
     padding: 30px 20px !important;
-    background: #7a22e0 !important; 
+    background: #7a22e0 !important;
     text-align: center !important;
 
-   .alert-title {
-    color: #ffffff !important;
-     font-size: 1.2rem !important;
+    .alert-title {
+      color: #ffffff !important;
+      font-size: 1.2rem !important;
       font-weight: 800 !important;
       text-transform: uppercase !important;
     }
@@ -117,14 +121,17 @@
   .alert-radio-group {
     border: none !important;
   }
+
   .alert-radio-button {
     --inner-border-width: 0 !important;
     border: none !important;
+
     .alert-radio-label {
       color: #333 !important;
       font-weight: 600 !important;
     }
   }
+
   //botones: 
   .alert-button-group {
     padding: 10px 20px 25px 20px !important;
@@ -152,6 +159,7 @@
       background: #f0f0f5 !important;
       color: #7a22e0 !important;
     }
+
     // btn aceptar
     &:last-child {
       background: #7a22e0 !important;

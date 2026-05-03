@@ -19,13 +19,6 @@
   margin-bottom: 40px;
 }
 
-.app-title {
-  font-size: 32px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 8px 0;
-  letter-spacing: -0.5px;
-}
 
 .app-subtitle {
   font-size: 14px;
@@ -159,4 +152,10 @@
   :host ::ng-deep > div {
     width: 100% !important;
   }
+}
+
+.logo img {
+  width: 180px;   
+  height: auto;
+  margin-bottom: -10px; 
 }

@@ -85,22 +85,15 @@
           <div class="poster-container">
             <img [src]="getImageUrl(peli.poster_path)" [alt]="peli.title">
             <div class="rating-badge" *ngIf="peli.vote_average >= 0">
-              <ion-icon name="star"></ion-icon>
-              {{ peli.vote_average | number:'1.1-1' }}
+              ⭐ {{ peli.vote_average | number:'1.1-1' }}
             </div>
           </div>
-          <ion-card-header>
-            <ion-card-title>{{ peli.title }}</ion-card-title>
-            <ion-chip class="year-badge">
-              {{ peli.release_date ? peli.release_date.split('-')[0] : '---' }}
-            </ion-chip>
-          </ion-card-header>
         </ion-card>
 
       </ion-col>
     </ion-row>
   </ion-grid>
-  
+
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)" *ngIf="currentPage < totalPages">
     <ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Cargando más películas...">
     </ion-infinite-scroll-content>

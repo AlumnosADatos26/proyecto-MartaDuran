@@ -31,6 +31,8 @@ export class DiscoverPage {
     miedo: [27, 53]
   };
   isSurprising = false;
+  hasError = false;
+  moviesVisible = 0;
 
   constructor(private movieService: MovieService, private router: Router) {
     addIcons({ diceOutline });
@@ -52,13 +54,29 @@ export class DiscoverPage {
   async loadMovies() {
     try {
       this.loading = true;
+      this.hasError = false;
       const respuesta = await this.movieService.getPopularMovies(this.page);
-      // Si ya hay películas, agregamos las nuevas al array
-      this.movies = [...this.movies, ...respuesta.results];
 
-    } catch (error) {
+      if (respuesta && respuesta.results) {
+        const todasLasPelis = [...this.movies, ...respuesta.results];
+        const sinDuplicados = todasLasPelis.filter((pelicula, index, self) =>
+          index === self.findIndex((p) => p.id === pelicula.id)
+        );
+
+        // solo guardamos las válidas
+        const validas = sinDuplicados.filter(p => this.isValidMovie(p));
+
+        //redondeamos hacia abajo al multiplo de 4 mas cercano para que cargue de 4 en 4 en escritorio
+        this.moviesVisible = Math.floor(validas.length / 4) * 4;
+        this.movies = validas;
+      }
+    }
+    catch (error) {
       console.error('Error al cargar películas', error);
-    } finally {
+      this.hasError = true;
+    }
+
+    finally {
       this.loading = false;
     }
   }
@@ -98,14 +116,14 @@ export class DiscoverPage {
   }
 
 
-irAMoodSearch(mood: string) {
-  this.router.navigate(['/tabs/search'], { 
-    queryParams: { mood },
-    replaceUrl: true  //reemplazamos la url en vez de apilarla
-  });
-}
+  irAMoodSearch(mood: string) {
+    this.router.navigate(['/tabs/search'], {
+      queryParams: { mood },
+      replaceUrl: true  //reemplazamos la url en vez de apilarla
+    });
+  }
 
-  
+
   async sorprendeme() {
     //si ya estamos buscando una peli, salimos para evitar clics dobles
     if (this.isSurprising) {
@@ -144,7 +162,6 @@ irAMoodSearch(mood: string) {
       this.isSurprising = false;
     }
   }
-
 
   cerrarSorpresa() {
     this.surpriseMovie = null;

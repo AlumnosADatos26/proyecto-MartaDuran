@@ -10,7 +10,7 @@ import com.example.apiMoodFilm.dto.GoogleAuthRequest;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin
+
 public class AuthController {
 
     private final AuthService authService;
@@ -36,5 +36,5 @@ public class AuthController {
     public AuthResponse googleLogin(@RequestBody GoogleAuthRequest request) {
         return authService.loginWithGoogle(request.getToken());
     }
-    
+
 }

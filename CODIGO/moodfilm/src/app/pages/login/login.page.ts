@@ -50,21 +50,27 @@ export class LoginPage implements OnInit {
       this.googleInitialized = true;
     }
 
-    setTimeout(() => {
-      const container = document.getElementById('google-btn-container');
-      if (container) {
-        container.innerHTML = '';
-        google.accounts.id.renderButton(container, {
-          type: 'standard',
-          shape: 'rectangular',
-          theme: 'outline',
-          text: 'continue_with',
-          size: 'large',
-          locale: 'es',
-          width: container.offsetWidth || 300
-        });
-      }
-    }, 100);
+    this.renderGoogleButton();
+  }
+
+  private renderGoogleButton() {
+    const container = document.getElementById('google-btn-container');
+
+    if (container) {
+      container.innerHTML = '';
+      google.accounts.id.renderButton(container, {
+        type: 'standard',
+        shape: 'rectangular',
+        theme: 'outline',
+        text: 'continue_with',
+        size: 'large',
+        locale: 'es',
+        width: container.offsetWidth || 300
+      });
+    }
+    else {
+      setTimeout(() => this.renderGoogleButton(), 100);
+    }
   }
 
   login() {
@@ -81,7 +87,7 @@ export class LoginPage implements OnInit {
 
         if (res.fotoPerfil) {
           this.auth.saveFotoPerfil(res.fotoPerfil);
-        } 
+        }
         else {
           localStorage.removeItem('fotoPerfil');
         }
@@ -93,7 +99,7 @@ export class LoginPage implements OnInit {
         }
         this.navCtrl.navigateRoot(destino);
       },
-      
+
       error: (err) => {
         console.error('Error al iniciar sesion:', err);
         alert('Email o contraseña incorrectos');
@@ -104,32 +110,33 @@ export class LoginPage implements OnInit {
   handleGoogleResponse(response: any) {
     const idToken = response.credential;
 
-    this.http.post<any>('http://localhost:8080/auth/google', 
-      { token: idToken
-    }).subscribe({
-      next: (res) => {
-        this.auth.saveToken(res.token);
-        this.auth.saveUserId(res.userId);
-        this.auth.saveUserInfo(res.username, res.email);
-        this.auth.saveBio(res.bio || '');
-        this.auth.saveGeneroFav(res.generoFavorito || '');
+    this.http.post<any>('http://localhost:8080/auth/google',
+      {
+        token: idToken
+      }).subscribe({
+        next: (res) => {
+          this.auth.saveToken(res.token);
+          this.auth.saveUserId(res.userId);
+          this.auth.saveUserInfo(res.username, res.email);
+          this.auth.saveBio(res.bio || '');
+          this.auth.saveGeneroFav(res.generoFavorito || '');
 
-        if (res.fotoPerfil) {
-          this.auth.saveFotoPerfil(res.fotoPerfil);
-        } 
-        else {
-          localStorage.removeItem('fotoPerfil');
+          if (res.fotoPerfil) {
+            this.auth.saveFotoPerfil(res.fotoPerfil);
+          }
+          else {
+            localStorage.removeItem('fotoPerfil');
+          }
+
+          this.navCtrl.navigateRoot(this.returnUrl);
+        },
+
+        error: (err) => {
+          console.error('Error login Google:', err);
+          const mensaje = err?.error?.message || err?.error || 'Error al iniciar sesión con Google';
+          alert(mensaje);
         }
-
-        this.navCtrl.navigateRoot(this.returnUrl);
-      },
-      
-      error: (err) => {
-        console.error('Error login Google:', err);
-        const mensaje = err?.error?.message || err?.error || 'Error al iniciar sesión con Google';
-        alert(mensaje);
-      }
-    });
+      });
   }
 
   loginGuest() {

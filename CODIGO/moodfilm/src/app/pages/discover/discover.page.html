@@ -1,8 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>
-      Películas Populares
-    </ion-title>
+    <ion-title>Películas Populares</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -12,10 +10,9 @@
     [class.fab-hidden]="surpriseMovie">
     <ion-button (click)="sorprendeme()" class="btn-sorpresa" mode="ios" [disabled]="isSurprising">
       <ion-icon name="dice-outline" slot="start"></ion-icon>
-    <span>{{ isSurprising ? 'Buscando...' : '¿Qué veo hoy?' }}</span>
+      <span>{{ isSurprising ? 'Buscando...' : '¿Qué veo hoy?' }}</span>
     </ion-button>
   </ion-fab>
-
 
   <div class="mood-section">
     <h2 class="mood-title">¿Cómo te sientes hoy?</h2>
@@ -43,15 +40,59 @@
     </div>
   </div>
 
-  <div class="surprise-overlay" *ngIf="surpriseMovie"></div>
+  <div class="error-container" *ngIf="hasError">
+    <ion-icon name="cloud-offline-outline"></ion-icon>
+    <h3>¡Vaya! No hay conexión</h3>
+    <p>No pudimos cargar las películas. Revisa tu internet.</p>
+    <ion-button (click)="loadMovies()" fill="outline" color="light">Reintentar</ion-button>
+  </div>
+
+  <ion-grid *ngIf="loading && movies.length === 0">
+    <ion-row>
+      <ion-col size="12" size-md="6" size-lg="3" *ngFor="let i of [1,2,3,4]">
+        <ion-card class="skeleton-card">
+          <ion-skeleton-text animated style="width: 100%; height: 250px; margin: 0;"></ion-skeleton-text>
+          <ion-card-header>
+            <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-skeleton-text animated style="width: 40%"></ion-skeleton-text>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid *ngIf="movies.length > 0">
+    <ion-row>
+      <ion-col *ngFor="let movie of movies.slice(0, moviesVisible)" size="12" size-sm="6" size-md="6" size-lg="3">
+        <ion-card button (click)="verFicha(movie)" class="movie-card">
+          <div class="poster-container">
+            <ion-img [src]="getPosterUrl(movie.poster_path)"></ion-img>
+            <div class="rating-badge" *ngIf="movie.vote_average >= 0">
+              ⭐ {{ movie.vote_average?.toFixed(1) }}
+            </div>
+          </div>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <div class="load-more-container" *ngIf="!hasError">
+    <button class="btn-load-more" (click)="loadMoreMovies()" [disabled]="loading">
+      <ion-spinner name="dots" *ngIf="loading"></ion-spinner>
+      <span *ngIf="!loading">Ver más películas</span>
+    </button>
+  </div>
+
+  <div class="surprise-overlay" *ngIf="surpriseMovie" (click)="surpriseMovie = null"></div>
 
   <div class="surprise-card" *ngIf="surpriseMovie">
-    <div class="surprise-bg" [style.background-image]="'url(' + getPosterUrl(surpriseMovie.poster_path) + ')'"></div>
+    <div class="surprise-bg" [style.backgroundImage]="'url(' + getPosterUrl(surpriseMovie.poster_path) + ')'"></div>
 
-    <button class="surprise-close" (click)="cerrarSorpresa()">✕</button>
+    <button class="surprise-close" (click)="surpriseMovie = null">✕</button>
 
     <div class="surprise-poster-wrap">
-      <img [src]="getPosterUrl(surpriseMovie.poster_path)" class="surprise-poster" alt="poster">
+      <img [src]="getPosterUrl(surpriseMovie.poster_path)" class="surprise-poster" />
     </div>
 
     <div class="surprise-info">
@@ -69,41 +110,5 @@
     </div>
   </div>
 
-  <div *ngIf="loading && movies.length === 0" class="loading-text">
-    Cargando películas...
-  </div>
-
-  <ion-grid *ngIf="movies.length > 0">
-    <ion-row>
-      <ng-container *ngFor="let movie of movies">
-        <ion-col size="12" size-md="6" size-lg="3" *ngIf="isValidMovie(movie)">
-          <ion-card button (click)="verFicha(movie)">
-            <ion-img [src]="getPosterUrl(movie.poster_path)"></ion-img>
-
-            <ion-card-header>
-              <ion-card-title>
-                {{ movie.title || 'Sin título' }}
-              </ion-card-title>
-            </ion-card-header>
-
-            <ion-card-content>
-              <div class="card-footer">
-                <div>⭐ {{ movie.vote_average != null ? movie.vote_average.toFixed(1) : 'N/A' }}</div>
-                <ion-chip color="warning">
-                  {{ movie.release_date ? movie.release_date.split('-')[0] : '---' }}
-                </ion-chip>
-              </div>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-      </ng-container>
-    </ion-row>
-  </ion-grid>
-
-  <div class="load-more-button">
-    <ion-button (click)="loadMoreMovies()">
-      +Más
-    </ion-button>
-  </div>
 
 </ion-content>

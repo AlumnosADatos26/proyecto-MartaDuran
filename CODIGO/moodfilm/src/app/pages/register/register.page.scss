@@ -71,6 +71,7 @@
   font-size: 15px;
   width: 100%;
 }
+
 //mensaje de error en rojo
 .error-message {
   color: #e53935;
@@ -110,4 +111,10 @@
       text-decoration: underline;
     }
   }
+}
+
+.logo img {
+  width: 180px;
+  height: auto;
+  margin-bottom: -10px;
 }
