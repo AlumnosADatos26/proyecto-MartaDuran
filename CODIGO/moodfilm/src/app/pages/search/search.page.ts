@@ -24,6 +24,7 @@ export class SearchPage implements OnInit {
   searching = false;
   isLoading = false;
   showFilters = false;
+  peliculasVisibles = 0;
 
   // filtros
   selectedGenre: string | null = null;
@@ -69,7 +70,7 @@ export class SearchPage implements OnInit {
       this.selectedMood = mood;
       this.showFilters = true;
       this.search();
-    } 
+    }
     else {
       //limpiamos todo
       this.selectedMood = null;
@@ -115,7 +116,7 @@ export class SearchPage implements OnInit {
 
       if (query) {
         res = await this.movieService.searchMovies(query, this.currentPage);
-      } 
+      }
       else {
         res = await this.movieService.discoverMovies({
           ...this.buildFilterParams(),
@@ -146,6 +147,8 @@ export class SearchPage implements OnInit {
           this.peliculas.push(movie);
         }
       }
+
+      this.peliculasVisibles = Math.floor(this.peliculas.length / 4) * 4;
 
     } catch (error) {
       console.error('Error buscando películas:', error);
@@ -255,8 +258,8 @@ export class SearchPage implements OnInit {
     this.selectedMood = null;
     this.selectedDuration = null;
     this.peliculas = [];
+    this.peliculasVisibles = 0; 
     this.searching = false;
-    //aqui limpiamos la url para que al volver no recargue el mood
     this.router.navigate(['/tabs/search'], {
       queryParams: {},
       replaceUrl: true

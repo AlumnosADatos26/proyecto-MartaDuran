@@ -54,6 +54,8 @@ export class MovieDetailsPage implements OnInit {
     const id = this.route.snapshot.queryParamMap.get('id');
     const from = this.route.snapshot.queryParamMap.get('from');
     this.cameFromLogin = from === 'login';
+    this.movie = null; //reseteamos para que no haya caché visual
+    this.comentariosMostrados = 4;
 
     if (id) {
       this.loadMovieDetails(+id);
@@ -62,6 +64,15 @@ export class MovieDetailsPage implements OnInit {
     }
   }
 
+  ionViewWillEnter() {
+    const id = this.route.snapshot.queryParamMap.get('id');
+    const from = this.route.snapshot.queryParamMap.get('from');
+    this.cameFromLogin = from === 'login';
+
+    if (id && (!this.movie || this.movie.id !== +id)) {
+      this.loadMovieDetails(+id);
+    }
+  }
   getPosterUrl(posterPath: string | null): string {
     if (!posterPath) return 'assets/img/no-poster.png';
     return `${this.IMAGE_BASE_URL}${posterPath}`;
@@ -109,7 +120,7 @@ export class MovieDetailsPage implements OnInit {
 
   goBack() {
     if (this.cameFromLogin) {
-      this.router.navigate(['/tabs/discover']);
+      this.router.navigate(['/tabs/discover'], { replaceUrl: true });
     } else {
       this.navCtrl.back();
     }
@@ -185,61 +196,63 @@ export class MovieDetailsPage implements OnInit {
 
 
   async addToList(movie: any) {
-  const userId = this.auth.getUserId();
-  const esInvitado = this.auth.isGuest();
+    const userId = this.auth.getUserId();
+    const esInvitado = this.auth.isGuest();
 
-  if (!userId || esInvitado) {
-    const alert = await this.alertCtrl.create({
-      header: 'Inicia sesión',
-      message: 'Debes iniciar sesión para guardar películas en tus listas.',
-      buttons: ['OK'],
+    if (!userId || esInvitado) {
+      const alert = await this.alertCtrl.create({
+        header: 'Inicia sesión',
+        message: 'Debes iniciar sesión para guardar películas en tus listas.',
+        buttons: ['OK'],
+        cssClass: 'alert-moderno'
+      });
+      await alert.present();
+      return;
+    }
+
+    const listas = await this.listaService.getListas(userId);
+    const inputs: any[] = listas.map((lista: any) => ({
+      type: 'radio', label: lista.nombre, value: lista.id
+    }));
+
+    const alertLista = await this.alertCtrl.create({
+      header: '¿A qué lista añadir?',
+      inputs,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Aceptar',
+          handler: async (listaId: any) => {
+            if (!listaId) {
+              return false;
+            }
+
+            const listaSeleccionada = listas.find((l: any) => l.id === listaId);
+            const nombre = listaSeleccionada?.nombre?.toLowerCase();
+
+            // Solo preguntamos mood en Vistas y Favoritas Y si la peli no está ya
+            if (nombre === 'vistas' || nombre === 'favoritas') {
+              const peliculas = await this.listaService.getPeliculasDeLista(listaId);
+              const yaExiste = peliculas.some((p: any) => p.tmdbId === movie.id);
+
+              if (yaExiste) {
+                // Ya está, guardamos sin preguntar mood (el backend lanzará error igual)
+                this.guardarEnLista(movie, listaId, null);
+              } else {
+                this.elegirMood(movie, listaId);
+              }
+            } else {
+              this.guardarEnLista(movie, listaId, null);
+            }
+            return true;
+          }
+        }
+      ],
       cssClass: 'alert-moderno'
     });
-    await alert.present();
-    return;
+
+    await alertLista.present();
   }
-
-  const listas = await this.listaService.getListas(userId);
-  const inputs: any[] = listas.map((lista: any) => ({
-    type: 'radio', label: lista.nombre, value: lista.id
-  }));
-
-  const alertLista = await this.alertCtrl.create({
-    header: '¿A qué lista añadir?',
-    inputs,
-    buttons: [
-      { text: 'Cancelar', role: 'cancel' },
-      {
-        text: 'Aceptar',
-        handler: async (listaId: any) => {
-          if (!listaId) return false;
-
-          const listaSeleccionada = listas.find((l: any) => l.id === listaId);
-          const nombre = listaSeleccionada?.nombre?.toLowerCase();
-
-          // Solo preguntamos mood en Vistas y Favoritas Y si la peli no está ya
-          if (nombre === 'vistas' || nombre === 'favoritas') {
-            const peliculas = await this.listaService.getPeliculasDeLista(listaId);
-            const yaExiste = peliculas.some((p: any) => p.tmdbId === movie.id);
-
-            if (yaExiste) {
-              // Ya está, guardamos sin preguntar mood (el backend lanzará error igual)
-              this.guardarEnLista(movie, listaId, null);
-            } else {
-              this.elegirMood(movie, listaId);
-            }
-          } else {
-            this.guardarEnLista(movie, listaId, null);
-          }
-          return true;
-        }
-      }
-    ],
-    cssClass: 'alert-moderno'
-  });
-
-  await alertLista.present();
-}
 
 
   async elegirMood(movie: any, listaId: number) {

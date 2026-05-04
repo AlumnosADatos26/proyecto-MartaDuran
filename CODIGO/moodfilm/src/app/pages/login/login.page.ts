@@ -97,7 +97,7 @@ export class LoginPage implements OnInit {
           const separator = destino.includes('?') ? '&' : '?';
           destino = destino + separator + 'from=login';
         }
-        this.navCtrl.navigateRoot(destino);
+        this.router.navigateByUrl(destino, { replaceUrl: true });
       },
 
       error: (err) => {
@@ -110,33 +110,34 @@ export class LoginPage implements OnInit {
   handleGoogleResponse(response: any) {
     const idToken = response.credential;
 
-    this.http.post<any>('http://localhost:8080/auth/google',
-      {
-        token: idToken
-      }).subscribe({
-        next: (res) => {
-          this.auth.saveToken(res.token);
-          this.auth.saveUserId(res.userId);
-          this.auth.saveUserInfo(res.username, res.email);
-          this.auth.saveBio(res.bio || '');
-          this.auth.saveGeneroFav(res.generoFavorito || '');
+    this.http.post<any>('http://localhost:8080/auth/google', { token: idToken }).subscribe({
+      next: (res) => {
+        this.auth.saveToken(res.token);
+        this.auth.saveUserId(res.userId);
+        this.auth.saveUserInfo(res.username, res.email);
+        this.auth.saveBio(res.bio || '');
+        this.auth.saveGeneroFav(res.generoFavorito || '');
 
-          if (res.fotoPerfil) {
-            this.auth.saveFotoPerfil(res.fotoPerfil);
-          }
-          else {
-            localStorage.removeItem('fotoPerfil');
-          }
-
-          this.navCtrl.navigateRoot(this.returnUrl);
-        },
-
-        error: (err) => {
-          console.error('Error login Google:', err);
-          const mensaje = err?.error?.message || err?.error || 'Error al iniciar sesión con Google';
-          alert(mensaje);
+        if (res.fotoPerfil) {
+          this.auth.saveFotoPerfil(res.fotoPerfil);
+        } else {
+          localStorage.removeItem('fotoPerfil');
         }
-      });
+
+        let destino = this.returnUrl;
+        if (destino.includes('movie-details')) {
+          const separator = destino.includes('?') ? '&' : '?';
+          destino = destino + separator + 'from=login';
+        }
+
+        this.router.navigateByUrl(destino, { replaceUrl: true });
+      },
+      error: (err) => {
+        console.error('Error login Google:', err);
+        const mensaje = err?.error?.message || err?.error || 'Error al iniciar sesión con Google';
+        alert(mensaje);
+      }
+    });
   }
 
   loginGuest() {
