@@ -1,6 +1,8 @@
-//mismo fondo que el login
 .register-content {
-  --background: #f5f5f5;
+  --background: none;
+  background: radial-gradient(circle at top left, rgba(253, 177, 37, 0.8), transparent 40%),
+    radial-gradient(circle at bottom right, rgba(150, 53, 219, 0.6), transparent 45%),
+    linear-gradient(135deg, #ead029, #6A0DAD);
 }
 
 .register-container {
@@ -13,108 +15,91 @@
   margin: 0 auto;
 }
 
-//cabecera
 .register-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
+
+  .logo img {
+    width: 160px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  }
+
+  .app-subtitle {
+    font-size: 14px;
+    color: white;
+    font-weight: 500;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
 }
 
-.app-title {
-  font-size: 32px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 8px 0;
-  letter-spacing: -0.5px;
-}
-
-.app-subtitle {
-  font-size: 14px;
-  color: #888;
-  margin: 0;
-  line-height: 1.4;
-}
-
-//para el formulario:
 .register-form {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  padding: 25px 20px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-//cada campo de texto :
 .input-group {
   display: flex;
   align-items: center;
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 4px 16px;
-  transition: border-color 0.2s;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 2px 16px;
+  transition: all 0.3s ease;
 
-  //cuando el campo esta activo, el borde se vuelve morado
   &:focus-within {
-    border-color: #6A0DAD;
+    border-color: white;
+    background: rgba(255, 255, 255, 0.3);
   }
 }
 
 .input-icon {
-  color: #aaa;
+  color: white;
   font-size: 18px;
   margin-right: 10px;
-  flex-shrink: 0;
 }
 
 .custom-input {
-  --background: transparent;
+  --color: white;
+  --placeholder-color: rgba(255, 255, 255, 0.7);
   --padding-start: 0;
-  --padding-end: 0;
-  font-size: 15px;
-  width: 100%;
 }
 
-//mensaje de error en rojo
 .error-message {
-  color: #e53935;
-  font-size: 13px;
-  text-align: center;
-  margin: 0;
-  padding: 4px 0;
+  color: #ff4d4d;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 5px;
 }
 
-//btn principal
 .btn-register {
-  --background: #6A0DAD;
-  --background-activated: #580a91;
-  --border-radius: 12px;
-  --box-shadow: none;
-  font-weight: 600;
+  --background: #ead029;
+  --color: #1a1a2e;
+  --border-radius: 14px;
+  font-weight: 700;
   height: 50px;
-  margin-top: 8px;
   font-size: 16px;
 }
 
-//link del login
 .login-link {
   text-align: center;
-  margin-top: 28px;
-  font-size: 14px;
-  color: #888;
+  margin-top: 25px;
+  color: white;
 
   a {
-    color: #6A0DAD;
-    font-weight: 600;
+    color: #ead029;
+    font-weight: 700;
     margin-left: 6px;
-    cursor: pointer;
     text-decoration: none;
 
     &:hover {
       text-decoration: underline;
     }
   }
-}
-
-.logo img {
-  width: 180px;
-  height: auto;
-  margin-bottom: -10px;
 }

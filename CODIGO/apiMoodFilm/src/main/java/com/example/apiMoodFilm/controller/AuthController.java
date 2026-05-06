@@ -7,6 +7,10 @@ import com.example.apiMoodFilm.service.AuthService;
 import org.springframework.web.bind.annotation.*;
 import com.example.apiMoodFilm.dto.AuthResponse;
 import com.example.apiMoodFilm.dto.GoogleAuthRequest;
+import com.example.apiMoodFilm.dto.RestablecerPasswordRequest;
+import com.example.apiMoodFilm.dto.SolicitudRecuperacionRequest;
+import java.util.Map;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/auth")
@@ -37,4 +41,16 @@ public class AuthController {
         return authService.loginWithGoogle(request.getToken());
     }
 
+    
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Map<String, String>> olvidastePassword(@RequestBody SolicitudRecuperacionRequest solicitud) {
+        authService.solicitarRecuperacion(solicitud.getEmail());
+        return ResponseEntity.ok(Map.of("message", "Si el email existe, recibirás un enlace en breve"));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, String>> restablecerPassword(@RequestBody RestablecerPasswordRequest solicitud) {
+        authService.restablecerPassword(solicitud.getToken(), solicitud.getNuevaPassword());
+        return ResponseEntity.ok(Map.of("message", "Contraseña actualizada correctamente"));
+    }
 }

@@ -1,7 +1,5 @@
 <ion-content class="login-content">
-
   <div class="login-container">
-
     <div class="login-header">
       <div class="logo">
         <img src="assets/img/logo_moodfilm_png.png" alt="MoodFilm Logo">
@@ -9,23 +7,24 @@
       <p class="app-subtitle">Encuentra la película perfecta para tu estado de ánimo</p>
     </div>
 
-    <div class="login-form" autocomplete="off">
-
+    <div class="login-form">
       <div class="input-group">
         <ion-icon name="mail-outline" class="input-icon"></ion-icon>
-        <ion-input type="email" placeholder="Correo electrónico" [(ngModel)]="email" class="custom-input" autocomplete="off">
-        </ion-input>
+        <ion-input type="email" placeholder="Correo electrónico" [(ngModel)]="email" class="custom-input"></ion-input>
       </div>
 
       <div class="input-group">
         <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
-        <ion-input type="password" placeholder="Contraseña" [(ngModel)]="password" class="custom-input" autocomplete="off">
-        </ion-input>
+        <ion-input type="password" placeholder="Contraseña" [(ngModel)]="password" class="custom-input"></ion-input>
       </div>
 
       <ion-button expand="block" class="btn-login" (click)="login()">
-        Iniciar sesión
+        INICIAR SESIÓN
       </ion-button>
+
+      <div class="forgot-link-container">
+        <a (click)="goToForgotPassword()">¿Olvidaste tu contraseña?</a>
+      </div>
 
       <div class="separator">
         <span class="separator-line"></span>
@@ -33,20 +32,16 @@
         <span class="separator-line"></span>
       </div>
 
-      <!-- ahora google renderiza su botón oficial -->
       <div id="google-btn-container" class="google-btn-wrapper"></div>
 
       <ion-button expand="block" fill="clear" class="btn-guest" (click)="loginGuest()">
-        Entrar como invitado
+        ENTRAR COMO INVITADO
       </ion-button>
-
     </div>
 
     <div class="register-link">
       <span>¿No tienes cuenta?</span>
       <a (click)="goToRegister()">Regístrate</a>
     </div>
-
   </div>
-
 </ion-content>

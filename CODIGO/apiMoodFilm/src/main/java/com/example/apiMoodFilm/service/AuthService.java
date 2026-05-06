@@ -9,7 +9,9 @@ import com.example.apiMoodFilm.model.AuthProvider;
 import com.example.apiMoodFilm.security.JwtUtil;
 import com.example.apiMoodFilm.dto.AuthResponse;
 import com.example.apiMoodFilm.model.Lista;
+import com.example.apiMoodFilm.model.TokenRecuperacion;
 import com.example.apiMoodFilm.repository.ListaRepository;
+import com.example.apiMoodFilm.repository.TokenRecuperacionRepository;
 
 @Service
 public class AuthService {
@@ -19,17 +21,23 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final ListaRepository listaRepository;
     private final GoogleTokenVerifier googleTokenVerifier;
+    private final TokenRecuperacionRepository tokenRecuperacionRepository;
+    private final EmailService servicioEmail;
 
     public AuthService(UsuarioRepository usuarioRepository,
             PasswordEncoder passwordEncoder,
             JwtUtil jwtUtil,
             ListaRepository listaRepository,
-            GoogleTokenVerifier googleTokenVerifier) {
+            GoogleTokenVerifier googleTokenVerifier,
+            TokenRecuperacionRepository tokenRecuperacionRepository,
+            EmailService servicioEmail) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.listaRepository = listaRepository;
         this.googleTokenVerifier = googleTokenVerifier;
+        this.tokenRecuperacionRepository = tokenRecuperacionRepository;
+        this.servicioEmail = servicioEmail;
     }
 
     public Usuario register(RegisterRequest request) {
@@ -99,7 +107,7 @@ public class AuthService {
             usuario.setEmail(email);
 
             //generamos un username único para evitar duplicados
-            String baseUsername = email.split("@")[0]; 
+            String baseUsername = email.split("@")[0];
             String username = baseUsername;
 
             //y si ya existe ese username, añadimos numeros al final hasta que sea único
@@ -141,4 +149,53 @@ public class AuthService {
                 usuario.getGeneroFavorito()
         );
     }
+
+    public void solicitarRecuperacion(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
+
+        // respondemos igual aunque el email no exista (seguridad)
+        if (usuario == null) {
+            return;
+        }
+
+        if (usuario.getProveedor() == AuthProvider.GOOGLE) {
+            throw new RuntimeException("Esta cuenta usa Google. Inicia sesión con el botón de Google.");
+        }
+
+        // borramos tokens anteriores del mismo usuario
+        tokenRecuperacionRepository.deleteByUsuarioId(usuario.getId());
+
+        String token = java.util.UUID.randomUUID().toString();
+        TokenRecuperacion nuevoToken = new TokenRecuperacion(
+                token,
+                usuario,
+                java.time.LocalDateTime.now().plusMinutes(15)
+        );
+        tokenRecuperacionRepository.save(nuevoToken);
+
+        servicioEmail.enviarEmailRecuperacion(email, token);
+    }
+
+    public void restablecerPassword(String token, String nuevaPassword) {
+        TokenRecuperacion tokenRecuperacion = tokenRecuperacionRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Token inválido o expirado"));
+
+        if (tokenRecuperacion.isUsado()) {
+            throw new RuntimeException("Este enlace ya fue utilizado");
+        }
+
+        if (tokenRecuperacion.getExpiracion().isBefore(java.time.LocalDateTime.now())) {
+            throw new RuntimeException("El enlace ha expirado. Solicita uno nuevo");
+        }
+
+        Usuario usuario = tokenRecuperacion.getUsuario();
+        usuario.setPassword(passwordEncoder.encode(nuevaPassword));
+        usuarioRepository.save(usuario);
+
+        tokenRecuperacion.setUsado(true);
+        tokenRecuperacionRepository.save(tokenRecuperacion);
+    }
+
+    
 }
+
