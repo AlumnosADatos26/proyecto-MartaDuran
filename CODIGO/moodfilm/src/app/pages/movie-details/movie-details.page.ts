@@ -261,7 +261,7 @@ export class MovieDetailsPage implements OnInit {
       { emoji: '😄', label: 'Felicidad', value: 'feliz' },
       { emoji: '😢', label: 'Tristeza', value: 'triste' },
       { emoji: '🤩', label: 'Emoción', value: 'emocionado' },
-      { emoji: '😌', label: 'Tranquilidad', value: 'relajado' },
+      { emoji: '😌', label: 'Relajado', value: 'relajado' },
       { emoji: '😱', label: 'Miedo', value: 'miedo' },
     ];
 

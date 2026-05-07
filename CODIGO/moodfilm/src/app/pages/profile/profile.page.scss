@@ -407,3 +407,19 @@ ion-col:nth-child(3) .lista-icon { color: #4CAF50; } // Vistas en verde
     color: #1a1a1a;   
   }
 }
+
+.watermark-logo {
+  position: fixed;
+  bottom: -20px;  
+  right: -30px;    
+  width: 250px;    
+  opacity: 0.06;   
+  transform: rotate(-15deg); 
+  pointer-events: none; 
+  z-index: 0;     
+}
+
+.user-card, .stats-row, .mood-map-section, .section {
+  position: relative;
+  z-index: 1;
+}

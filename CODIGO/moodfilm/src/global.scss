@@ -35,8 +35,8 @@
 ////////////////////////
 
 //cambiamos la fuente de toda la app:
-* { 
-  font-family: 'Poppins', sans-serif !important; 
+* {
+  font-family: 'Poppins', sans-serif !important;
 }
 
 .toast-moderno {
@@ -126,6 +126,24 @@
     --inner-border-width: 0 !important;
     border: none !important;
 
+    .alert-radio-icon {
+      border-color: #7a22e0 !important;
+    }
+
+    .alert-radio-inner {
+      background-color: #7a22e0 !important;
+    }
+
+    &[aria-checked=true] {
+      .alert-radio-icon {
+        border-color: #7a22e0 !important;
+      }
+
+      .alert-radio-label {
+        color: #7a22e0 !important;
+      }
+    }
+
     .alert-radio-label {
       color: #333 !important;
       font-weight: 600 !important;
@@ -167,4 +185,32 @@
       box-shadow: 0 4px 12px rgba(122, 34, 224, 0.3) !important;
     }
   }
+}
+
+.custom-input {
+  --highlight-height: 0 !important;
+  --show-full-highlight: 0 !important;
+
+  caret-color: #ead029 !important;
+
+  --accent-color: #ead029 !important;
+}
+
+ion-input.custom-input .native-input {
+  caret-color: #ead029 !important;
+}
+
+//para la barra de navegación:
+ion-tab-bar {
+  --background: #7a22d3;
+
+  --color: rgba(255, 255, 255, 0.6);
+
+  --color-selected: #ead029;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+ion-tab-button {
+  --ripple-color: rgba(234, 208, 41, 0.2);
 }
