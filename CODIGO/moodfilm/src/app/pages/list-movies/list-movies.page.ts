@@ -121,4 +121,8 @@ export class ListMoviesPage implements OnInit {
   }
 
 
+  irABuscar() {
+  this.router.navigate(['/tabs/search']); 
+}
+
 }

@@ -18,7 +18,6 @@ export class AuthService {
     saveToken(token: string) {
         localStorage.setItem('token', token);
         localStorage.removeItem('guest');
-        localStorage.removeItem('userId');
     }
 
     getToken(): string | null {

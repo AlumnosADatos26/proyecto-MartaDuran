@@ -15,9 +15,17 @@
     Cargando películas...
   </div>
 
-  <!-- Sin pelis -->
-  <div *ngIf="!loading && peliculas.length === 0">
-    <p>Esta lista está vacía. ¡Añade películas desde su ficha!</p>
+  <div *ngIf="!loading && peliculas.length === 0" class="empty-container">
+    <div class="empty-icon-wrapper">
+      <ion-icon name="film-outline"></ion-icon>
+    </div>
+    <h2>¡Tu lista está esperando!</h2>
+    <p>Aún no has añadido ninguna película aquí.</p>
+    <p>Explora la cartelera y guarda tus favoritas.</p>
+    <ion-button fill="clear" color="light" (click)="irABuscar()">
+      <ion-icon name="search-outline" slot="start"></ion-icon>
+      Buscar películas
+    </ion-button>
   </div>
 
   <!-- cuando hay pelis -->

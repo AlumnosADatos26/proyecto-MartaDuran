@@ -131,7 +131,31 @@ ion-textarea.custom-input::part(counter) {
   margin-top: 10px;
 }
 
+ion-input.custom-input, ion-textarea.custom-input {
+  --highlight-color-focused: transparent;
+  --highlight-color-valid: transparent;
+  --highlight-color-invalid: transparent;
+}
 
+ion-select.custom-select {
+  --highlight-color-focused: transparent;
+  --highlight-color-valid: transparent;
+  --highlight-color-invalid: transparent;
+  --border-color: transparent;
+}
 
+ion-input.custom-input {
+  --highlight-color-focused: transparent;
+  --highlight-color-valid: transparent;
+  --highlight-color-invalid: transparent;
+}
 
+ion-textarea.custom-input {
+  --highlight-color-focused: transparent;
+  --highlight-color-valid: transparent;
+  --highlight-color-invalid: transparent;
+}
 
+ion-textarea.custom-input::part(textarea) {
+  caret-color: #6A0DAD !important;
+}

@@ -58,7 +58,6 @@ public class AuthService {
 
         Usuario nuevoUsuario = usuarioRepository.save(usuario);
 
-        
         String[] listasPorDefecto = {"Favoritas", "Por ver", "Vistas"};
         for (String nombre : listasPorDefecto) {
             Lista lista = new Lista();
@@ -70,7 +69,6 @@ public class AuthService {
         return nuevoUsuario;
     }
 
-    
     public AuthResponse login(String email, String password) {
 
         Usuario usuario = usuarioRepository.findByEmail(email)
@@ -133,9 +131,11 @@ public class AuthService {
             }
             usuario = nuevoUsuario;
 
-        } 
-        else if (usuario.getProveedor() == AuthProvider.LOCAL) {
-            throw new RuntimeException("Este email ya está registrado con contraseña. Usa el login normal.");
+        } else if (usuario.getProveedor() == AuthProvider.LOCAL) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Este email ya está registrado con contraseña. Usa el login normal."
+            );
         }
 
         String token = jwtUtil.generateToken(usuario);
@@ -159,7 +159,10 @@ public class AuthService {
         }
 
         if (usuario.getProveedor() == AuthProvider.GOOGLE) {
-            throw new RuntimeException("Esta cuenta usa Google. Inicia sesión con el botón de Google.");
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Esta cuenta usa Google. Inicia sesión con el botón de Google."
+            );
         }
 
         // borramos tokens anteriores del mismo usuario

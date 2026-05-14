@@ -4,11 +4,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class TmdbService {
 
-    private final String apiKey = "ef7e2eea6a70b4a7b8bb8c73cdf9d549"; // reemplaza con la clave TMDB
+    @Value("${tmdb.api.key}")
+    private String apiKey; //reemplaza con la clave tmdb
     private final String baseUrl = "https://api.themoviedb.org/3";
     private final RestTemplate restTemplate = new RestTemplate();
 

@@ -6,6 +6,7 @@ import com.example.apiMoodFilm.service.ComentarioService;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/comentarios")
@@ -40,7 +41,18 @@ public class ComentarioController {
     }
 
     @DeleteMapping("/{id}")
-    public void eliminarComentario(@PathVariable Long id) {
+    public void eliminarComentario(@PathVariable Long id, Authentication authentication) {
+        Comentario c = comentarioService.obtenerPorId(id)
+                .orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
+
+        String usuarioLogueado = authentication.getName();
+
+        if (!c.getUsuario().getEmail().equals(usuarioLogueado)
+                && !c.getUsuario().getUsername().equals(usuarioLogueado)) {
+
+            throw new RuntimeException("No tienes permiso para borrar este comentario. No te pertenece.");
+        }
+
         comentarioService.eliminar(id);
     }
 

@@ -236,8 +236,13 @@ export class MovieDetailsPage implements OnInit {
               const yaExiste = peliculas.some((p: any) => p.tmdbId === movie.id);
 
               if (yaExiste) {
-                // Ya está, guardamos sin preguntar mood (el backend lanzará error igual)
-                this.guardarEnLista(movie, listaId, null);
+                const toast = await this.toastCtrl.create({
+                  message: 'Esta película ya está en esa lista',
+                  duration: 2000,
+                  position: 'bottom',
+                  cssClass: 'toast-moderno'
+                });
+                await toast.present();
               } else {
                 this.elegirMood(movie, listaId);
               }

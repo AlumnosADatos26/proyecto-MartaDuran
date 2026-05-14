@@ -148,7 +148,9 @@ export class SearchPage implements OnInit {
         }
       }
 
-      this.peliculasVisibles = Math.floor(this.peliculas.length / 4) * 4;
+      this.peliculasVisibles = this.peliculas.length < 4
+        ? this.peliculas.length
+        : Math.floor(this.peliculas.length / 4) * 4;
 
     } catch (error) {
       console.error('Error buscando películas:', error);
@@ -231,16 +233,21 @@ export class SearchPage implements OnInit {
   }
 
   async loadMore(event: any) {
-
     if (this.currentPage >= this.totalPages) {
       event.target.complete();
+      event.target.disabled = true; 
       return;
     }
 
     this.currentPage++;
-    await this.search(true);
 
-    event.target.complete();
+    try {
+      await this.search(true);
+    } catch (error) {
+      console.error('Error en loadMore:', error);
+    } finally {
+      event.target.complete(); 
+    }
   }
 
   applyFilters() {
@@ -258,7 +265,7 @@ export class SearchPage implements OnInit {
     this.selectedMood = null;
     this.selectedDuration = null;
     this.peliculas = [];
-    this.peliculasVisibles = 0; 
+    this.peliculasVisibles = 0;
     this.searching = false;
     this.router.navigate(['/tabs/search'], {
       queryParams: {},

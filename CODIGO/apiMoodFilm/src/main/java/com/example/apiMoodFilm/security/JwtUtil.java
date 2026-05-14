@@ -7,11 +7,13 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Value;
 
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "moodfilm_clave_secreta_larga_moodfilm_clave_secreta_larga";
+    @Value("${jwt.secret}")
+    private String SECRET;
     private final long EXPIRATION = 86400000;
 
     private Key getSigningKey() {

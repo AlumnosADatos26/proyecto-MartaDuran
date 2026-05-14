@@ -6,6 +6,8 @@ import { AppComponent } from './app/app.component';
 import { provideHttpClient } from '@angular/common/http';  // HttpClient
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es'; // español
+import { withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './app/services/auth.interceptor';
 
 //Registramos el locale español globalmente
 registerLocaleData(localeEs);
@@ -15,5 +17,11 @@ bootstrapApplication(AppComponent, {
     provideIonicAngular(),
     provideRouter(routes),
     provideHttpClient(),   // inyección de HttpClient
+    provideHttpClient(withInterceptorsFromDi()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
   ]
 });

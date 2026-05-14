@@ -49,7 +49,7 @@ export class ProfilePage implements OnInit {
   }
 
   ngOnInit() {
-    // Suscripción a los cambios del servicio para refrescas los datos al instante
+
     this.auth.fotoActual$.subscribe(foto => this.fotoPerfil = foto);
     this.auth.bioActual$.subscribe(bio => this.descripcion = bio);
     this.auth.generoFavoritoActual$.subscribe(genero => this.generoFavorito = genero);
@@ -81,7 +81,6 @@ export class ProfilePage implements OnInit {
   ionViewWillEnter() {
     this.cargarPerfil();
     this.cargarDatosBackend();
-
   }
 
   cargarDatosBackend() {
@@ -93,15 +92,11 @@ export class ProfilePage implements OnInit {
             this.descripcion = user.bio || '';
             this.generoFavorito = user.generoFavorito || '';
             this.username = user.username;
-
-            //dincronizamos con el servicio/localstorage
             this.auth.saveBio(user.bio || '');
             this.auth.saveGeneroFav(user.generoFavorito || '');
             this.auth.saveUsername(user.username);
-
             console.log('Datos actualizados desde el servidor');
           },
-
           error: (err) => console.error('Error al conectar con el servidor', err)
         });
     }
@@ -136,6 +131,7 @@ export class ProfilePage implements OnInit {
 
       let vistas = 0;
       let favs = 0;
+      let todasLasPeliculas: any[] = [];
 
       for (const lista of todasLasListas) {
         const peliculas = await this.listaService.getPeliculasDeLista(lista.id);
@@ -145,12 +141,15 @@ export class ProfilePage implements OnInit {
         if (lista.nombre === 'Favoritas') {
           favs = peliculas.length;
         }
+        //acumulamos todas las pelis de todas las listas
+        todasLasPeliculas = todasLasPeliculas.concat(peliculas);
       }
 
       this.peliculasVistas = vistas;
       this.peliculasFavoritas = favs;
       this.misComentarios = await this.comentarioService.getComentariosPorUsuario(userId);
-      await this.cargarMoodStats(userId);
+      //y pasamos las peliculas ya cargadas en vez de hacer una nueva llamada http
+      await this.cargarMoodStats(todasLasPeliculas);
     }
     catch (error) {
       console.error('Error al cargar perfil:', error);
@@ -188,14 +187,10 @@ export class ProfilePage implements OnInit {
     this.router.navigate(['/my-comments']);
   }
 
-
-  async cargarMoodStats(userId: string | number) {
+  //ahora reciibimos las pelis ya cargadas en lugar de hacer una llamada http
+  async cargarMoodStats(peliculas: any[]) {
     try {
-      const peliculas = await this.http.get<any[]>(
-        `http://localhost:8080/listas/usuario/${userId}/peliculas`)
-        .toPromise();
-
-      if (!peliculas) {
+      if (!peliculas || peliculas.length === 0) {
         return;
       }
 
@@ -225,7 +220,6 @@ export class ProfilePage implements OnInit {
         feliz: '😄', triste: '😢', emocionado: '🤩', relajado: '😌', miedo: '😱'
       };
 
-      //resuemn del mes controlando los empates:
       if (pelisMesAnterior.length > 0) {
         const moodMapAnterior: { [key: string]: number } = {
           feliz: 0, triste: 0, emocionado: 0, relajado: 0, miedo: 0
@@ -262,7 +256,6 @@ export class ProfilePage implements OnInit {
         }
       }
 
-      //grafica: este mes si tiene datos, si no el anterior
       const pelisParaGrafica = pelisEsteMes.length > 0 ? pelisEsteMes : pelisMesAnterior;
 
       const moodMap: { [key: string]: number } = {

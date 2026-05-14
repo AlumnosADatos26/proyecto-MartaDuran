@@ -214,3 +214,15 @@ ion-tab-bar {
 ion-tab-button {
   --ripple-color: rgba(234, 208, 41, 0.2);
 }
+
+ion-textarea.custom-input {
+  caret-color:  #ead029 !important;
+}
+
+ion-textarea.custom-input::part(native) {
+  caret-color: #ead029 !important;
+}
+
+ion-textarea.custom-input textarea {
+  caret-color: #ead029 !important;
+}

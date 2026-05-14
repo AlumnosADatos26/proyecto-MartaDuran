@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { mailOutline, lockClosedOutline } from 'ionicons/icons';
 import { NavController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 
 declare const google: any;
 
@@ -32,7 +33,8 @@ export class LoginPage implements OnInit {
     private router: Router,
     private auth: AuthService,
     private route: ActivatedRoute,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private alertCtrl: AlertController
   ) {
     addIcons({ mailOutline, lockClosedOutline });
   }
@@ -74,13 +76,20 @@ export class LoginPage implements OnInit {
   }
 
   login() {
+
+    if (!this.email || !this.password) {
+      this.presentAlert('Campos incompletos', 'Por favor, introduce tu correo y contraseña.');
+      return;
+    }
+
     this.http.post<any>('http://localhost:8080/auth/login', {
       email: this.email,
       password: this.password
     }).subscribe({
       next: (res) => {
         this.auth.saveToken(res.token);
-        this.auth.saveUserId(res.userId);
+        const idAGuardar = res.userId || res.id || res.usuarioId;
+        this.auth.saveUserId(idAGuardar);;
         this.auth.saveUserInfo(res.username, res.email);
         this.auth.saveBio(res.bio || '');
         this.auth.saveGeneroFav(res.generoFavorito || '');
@@ -102,7 +111,7 @@ export class LoginPage implements OnInit {
 
       error: (err) => {
         console.error('Error al iniciar sesion:', err);
-        alert('Email o contraseña incorrectos');
+        this.presentAlert('Error de acceso', 'El email o la contraseña no coinciden.');
       }
     });
   }
@@ -113,7 +122,8 @@ export class LoginPage implements OnInit {
     this.http.post<any>('http://localhost:8080/auth/google', { token: idToken }).subscribe({
       next: (res) => {
         this.auth.saveToken(res.token);
-        this.auth.saveUserId(res.userId);
+        const idAGuardar = res.userId || res.id || res.usuarioId;
+        this.auth.saveUserId(idAGuardar);
         this.auth.saveUserInfo(res.username, res.email);
         this.auth.saveBio(res.bio || '');
         this.auth.saveGeneroFav(res.generoFavorito || '');
@@ -132,10 +142,17 @@ export class LoginPage implements OnInit {
 
         this.router.navigateByUrl(destino, { replaceUrl: true });
       },
-      error: (err) => {
-        console.error('Error login Google:', err);
-        const mensaje = err?.error?.message || err?.error || 'Error al iniciar sesión con Google';
-        alert(mensaje);
+      error: async (err) => {
+        console.error('Error login con Google:', err);
+        const mensaje = err?.error?.detail || err?.error?.message || err?.error || 'Error al iniciar sesión con Google';
+        
+        const alert = await this.alertCtrl.create({
+          header: 'MoodFilm',
+          message: mensaje,
+          buttons: ['OK'],
+          cssClass: 'alert-moderno'
+        });
+        await alert.present();
       }
     });
   }
@@ -152,5 +169,18 @@ export class LoginPage implements OnInit {
   goToForgotPassword() {
     this.router.navigate(['/forgot-password']);
   }
+
+  async presentAlert(subHeader: string, message: string) {
+    const alert = await this.alertCtrl.create({
+      header: 'MoodFilm',
+      subHeader: subHeader,
+      message: message,
+      buttons: ['OK'],
+      cssClass: 'alert-moderno'
+    });
+
+    await alert.present();
+  }
+
 
 }
