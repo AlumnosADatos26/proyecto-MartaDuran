@@ -6,8 +6,8 @@
 
 <ion-content class="ion-padding">
 
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end" style="overflow: visible;"
-    [class.fab-hidden]="surpriseMovie">
+<ion-fab slot="fixed" vertical="bottom" horizontal="end" style="overflow: visible;"
+  *ngIf="!surpriseMovie && !loading">
     <ion-button (click)="sorprendeme()" class="btn-sorpresa" mode="ios" [disabled]="isSurprising">
       <ion-icon name="dice-outline" slot="start"></ion-icon>
       <span>{{ isSurprising ? 'Buscando...' : '¿Qué veo hoy?' }}</span>

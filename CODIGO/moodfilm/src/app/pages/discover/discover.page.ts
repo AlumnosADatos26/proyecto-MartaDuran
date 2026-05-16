@@ -19,7 +19,7 @@ export class DiscoverPage {
 
   movies: any[] = [];     // lista de películas que se mostrarán 
   page = 1;               // Página actual (para la paginación)
-  loading = true;         // controla el mensaje de carga
+  loading = false;         // controla el mensaje de carga
   readonly IMAGE_BASE_URL = environment.tmdbImageUrl;
 
   surpriseMovie: any = null;
