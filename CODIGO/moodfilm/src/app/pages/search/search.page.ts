@@ -25,6 +25,7 @@ export class SearchPage implements OnInit {
   isLoading = false;
   showFilters = false;
   peliculasVisibles = 0;
+  hasSearched = false;
 
   // filtros
   selectedGenre: string | null = null;
@@ -45,10 +46,10 @@ export class SearchPage implements OnInit {
 
   // moods en español
   moodToGenres: any = {
-    feliz: [35, 10751, 16],
+    feliz: [35, 10751],
     triste: [18, 10749],
-    emocionado: [28, 12, 878],
-    relajado: [16, 35],
+    emocionado: [28, 878, 12],
+    relajado: [16, 14, 12],
     miedo: [27, 53]
   };
 
@@ -90,6 +91,9 @@ export class SearchPage implements OnInit {
     } else if (this.nombrePeli.trim().length === 0) {
       this.peliculas = [];
       this.searching = false;
+      if (this.hasActiveFilters()) {
+        await this.search();
+      }
     }
   }
 
@@ -106,6 +110,7 @@ export class SearchPage implements OnInit {
     if (!loadMore) {
       this.currentPage = 1;
       this.peliculas = [];
+      this.hasSearched = false;
     }
 
     this.searching = true;
@@ -114,10 +119,9 @@ export class SearchPage implements OnInit {
     try {
       let res: any;
 
-      if (query) {
+      if (query && !this.hasActiveFilters()) {
         res = await this.movieService.searchMovies(query, this.currentPage);
-      }
-      else {
+      } else {
         res = await this.movieService.discoverMovies({
           ...this.buildFilterParams(),
           page: this.currentPage
@@ -148,34 +152,33 @@ export class SearchPage implements OnInit {
         }
       }
 
-      this.peliculasVisibles = this.peliculas.length < 4
+      this.peliculasVisibles = this.peliculas.length < 2
         ? this.peliculas.length
-        : Math.floor(this.peliculas.length / 4) * 4;
+        : Math.floor(this.peliculas.length / 2) * 2;
 
     } catch (error) {
       console.error('Error buscando películas:', error);
     } finally {
       this.isLoading = false;
+      this.hasSearched = true;
     }
   }
 
   buildFilterParams() {
     const params: { [key: string]: string } = {};
 
-    //mood y genero son excluyentes, solo se usa uno de los dos
     if (this.selectedMood) {
-      // el mood define los generos internamente
       const generosDelMood = this.moodToGenres[this.selectedMood] || [];
       if (generosDelMood.length > 0) {
+        // Unimos con comas (Operador OR en TMDB)
         params['with_genres'] = generosDelMood.join(',');
       }
-
-    } else if (this.selectedGenre) {
-      //si no hay mood, usamos el género manual
+    }
+    else if (this.selectedGenre) {
       params['with_genres'] = this.selectedGenre;
     }
 
-    //pero duración se combina con cualquiera de los dos sin problema:
+    // Duración
     if (this.selectedDuration === 'corta') {
       params['with_runtime.lte'] = '90';
     } else if (this.selectedDuration === 'media') {
@@ -185,7 +188,10 @@ export class SearchPage implements OnInit {
       params['with_runtime.gte'] = '120';
     }
 
-    params['vote_count.gte'] = '50';
+    //filtros de calidad  para evitar respuestas vacías de la api
+    params['vote_count.gte'] = '100';         
+    params['vote_average.gte'] = '6.0';       
+    params['sort_by'] = 'popularity.desc';     
     params['include_adult'] = 'false';
 
     return params;
@@ -206,16 +212,19 @@ export class SearchPage implements OnInit {
   toggleGenre(id: string) {
     this.selectedGenre = this.selectedGenre === id ? null : id;
     this.search();
+    this.nombrePeli = '';
   }
 
   toggleMood(mood: string) {
     this.selectedMood = this.selectedMood === mood ? null : mood;
     this.search();
+    this.nombrePeli = '';
   }
 
   toggleDuration(duration: string) {
     this.selectedDuration = this.selectedDuration === duration ? null : duration;
     this.search();
+    this.nombrePeli = '';
   }
 
   toggleFilters() {
@@ -235,7 +244,7 @@ export class SearchPage implements OnInit {
   async loadMore(event: any) {
     if (this.currentPage >= this.totalPages) {
       event.target.complete();
-      event.target.disabled = true; 
+      event.target.disabled = true;
       return;
     }
 
@@ -246,7 +255,7 @@ export class SearchPage implements OnInit {
     } catch (error) {
       console.error('Error en loadMore:', error);
     } finally {
-      event.target.complete(); 
+      event.target.complete();
     }
   }
 
@@ -271,6 +280,7 @@ export class SearchPage implements OnInit {
       queryParams: {},
       replaceUrl: true
     });
+    this.hasSearched = false;
   }
 
 }

@@ -1,27 +1,23 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar class="custom-toolbar">
     <ion-title>Buscar películas</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
-  <!-- barra de busqueda principal -->
   <ion-searchbar [(ngModel)]="nombrePeli" placeholder="Busca por título de película" (ionInput)="onSearchInput()"
-    debounce="500">
+    debounce="500" class="custom-searchbar">
   </ion-searchbar>
 
-  <!-- btn para mostrar/ocultar filtros -->
-  <ion-button expand="block" fill="outline" (click)="toggleFilters()">
-    <ion-icon name="filter-outline" slot="start"></ion-icon>
-    {{ showFilters ? 'Ocultar filtros' : 'Mostrar filtros' }}
+  <ion-button expand="block" fill="clear" color="warning" class="btn-toggle-filters" (click)="toggleFilters()">
+    <ion-icon [name]="showFilters ? 'chevron-up-outline' : 'filter-outline'" slot="start"></ion-icon>
+    {{ showFilters ? 'Ocultar filtros avanzados' : 'Filtrar por género o ánimo' }}
   </ion-button>
 
-  <!-- panel de filtros -->
-  <div *ngIf="showFilters" class="filters-container">
+  <div *ngIf="showFilters" class="filters-container animate-fade-in">
 
-    <!-- GENERO: desactivado si hay mood seleccionado -->
-    <p class="filter-title" [class.disabled]="selectedMood">Género</p>
+    <p class="filter-title" [class.disabled]="selectedMood">Por Género</p>
     <div class="chips-row">
       <ion-chip *ngFor="let genre of genres" [class.active]="selectedGenre === genre.id" [disabled]="!!selectedMood"
         (click)="!selectedMood && toggleGenre(genre.id)">
@@ -29,8 +25,7 @@
       </ion-chip>
     </div>
 
-    <!-- MOOD: desactivado si hay genero seleccionado -->
-    <p class="filter-title" [class.disabled]="selectedGenre">Estado de ánimo</p>
+    <p class="filter-title" [class.disabled]="selectedGenre">Por Estado de ánimo</p>
     <div class="chips-row">
       <ion-chip *ngFor="let mood of ['feliz','triste','emocionado','relajado','miedo']"
         [class.active]="selectedMood === mood" [disabled]="!!selectedGenre"
@@ -39,8 +34,7 @@
       </ion-chip>
     </div>
 
-    <!-- DURACIon -->
-    <p class="filter-title">Duración</p>
+    <p class="filter-title">Por Duración</p>
     <div class="chips-row">
       <ion-chip [class.active]="selectedDuration === 'corta'" (click)="toggleDuration('corta')">
         Corta (~90 min)
@@ -53,48 +47,46 @@
       </ion-chip>
     </div>
 
-    <ion-button expand="block" fill="clear" (click)="clearFilters()">
+    <ion-button expand="block" fill="clear" color="light" size="small" class="btn-clear" (click)="clearFilters()">
       Limpiar filtros
     </ion-button>
 
   </div>
 
-  <!-- Indicador de carga -->
   <div *ngIf="isLoading" class="loading-container">
-    <ion-spinner></ion-spinner>
-    <p>Buscando películas...</p>
+    <ion-spinner color="warning" name="crescent"></ion-spinner>
+    <p>Buscando en MoodFilm...</p>
   </div>
 
-  <!-- Mensaje cuando no hay resultados -->
-  <div *ngIf="searching && peliculas.length === 0 && !isLoading" class="no-results">
-    <ion-icon name="film-outline" size="large"></ion-icon>
-    <p>No se encontraron películas.</p>
-    <p class="hint">Intenta con otros términos o filtros</p>
+  <div *ngIf="hasSearched && !isLoading && peliculas.length === 0 && (nombrePeli.trim() || hasActiveFilters())"
+    class="error-container">
+    <ion-icon name="film-outline"></ion-icon>
+    <h3>No se encontraron películas</h3>
+    <p>Intenta con otros términos o cambia tus filtros de ánimo.</p>
   </div>
 
-  <!-- Resultados -->
   <div *ngIf="peliculas.length > 0" class="results-header">
-    <p>{{ peliculas.length }} resultado{{ peliculas.length !== 1 ? 's' : '' }}</p>
+    <p>{{ peliculas.length }} película{{ peliculas.length !== 1 ? 's' : '' }} encontrada{{ peliculas.length !== 1 ? 's'
+      : '' }}</p>
   </div>
 
-  <ion-grid *ngIf="peliculas.length > 0">
+  <ion-grid *ngIf="peliculas.length > 0" class="ion-no-padding">
     <ion-row>
-      <ion-col size="12" size-sm="6" size-md="4" size-lg="3" *ngFor="let peli of peliculas.slice(0, peliculasVisibles)">
-        <ion-card (click)="verFicha(peli)" class="movie-card">
+      <ion-col size="6" size-sm="4" size-md="3" size-lg="2" *ngFor="let peli of peliculas.slice(0, peliculasVisibles)">
+        <ion-card (click)="verFicha(peli)">
           <div class="poster-container">
-            <img [src]="getImageUrl(peli.poster_path)" [alt]="peli.title">
+            <ion-img [src]="getImageUrl(peli.poster_path)" [alt]="peli.title"></ion-img>
             <div class="rating-badge" *ngIf="peli.vote_average >= 0">
-              ⭐ {{ peli.vote_average | number:'1.1-1' }}
+              <span>⭐ {{ peli.vote_average | number:'1.1-1' }}</span>
             </div>
           </div>
         </ion-card>
-
       </ion-col>
     </ion-row>
   </ion-grid>
 
   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)" *ngIf="currentPage < totalPages">
-    <ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Cargando más películas...">
+    <ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Cargando ...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 

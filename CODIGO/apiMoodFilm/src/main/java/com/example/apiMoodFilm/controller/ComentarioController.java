@@ -10,7 +10,7 @@ import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/comentarios")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:8100")
 public class ComentarioController {
 
     private final ComentarioService comentarioService;
@@ -45,14 +45,18 @@ public class ComentarioController {
         Comentario c = comentarioService.obtenerPorId(id)
                 .orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
 
-        String usuarioLogueado = authentication.getName();
+        String usuarioLogueado;
+        if (authentication.getPrincipal() instanceof com.example.apiMoodFilm.model.Usuario usuario) {
+            usuarioLogueado = usuario.getEmail();
+        } 
+        else {
+            usuarioLogueado = authentication.getName();
+        }
 
         if (!c.getUsuario().getEmail().equals(usuarioLogueado)
                 && !c.getUsuario().getUsername().equals(usuarioLogueado)) {
-
             throw new RuntimeException("No tienes permiso para borrar este comentario. No te pertenece.");
         }
-
         comentarioService.eliminar(id);
     }
 

@@ -7,7 +7,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/tmdb")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:8100")
 public class TmdbController {
 
     private final TmdbService tmdbService;
