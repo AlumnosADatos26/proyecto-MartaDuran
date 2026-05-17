@@ -56,6 +56,7 @@ export class MovieDetailsPage implements OnInit {
     this.cameFromLogin = from === 'login';
     this.movie = null; //reseteamos para que no haya caché visual
     this.comentariosMostrados = 4;
+    this.movieService.comentarios = [];
 
     if (id) {
       this.loadMovieDetails(+id);
@@ -70,9 +71,11 @@ export class MovieDetailsPage implements OnInit {
     this.cameFromLogin = from === 'login';
 
     if (id && (!this.movie || this.movie.id !== +id)) {
+      this.movieService.comentarios = [];
       this.loadMovieDetails(+id);
     }
   }
+
   getPosterUrl(posterPath: string | null): string {
     if (!posterPath) return 'assets/img/no-poster.png';
     return `${this.IMAGE_BASE_URL}${posterPath}`;
@@ -192,6 +195,10 @@ export class MovieDetailsPage implements OnInit {
 
   verMasComentarios() {
     this.comentariosMostrados += 4;
+  }
+
+  verMenosComentarios() {
+    this.comentariosMostrados = 4;
   }
 
 

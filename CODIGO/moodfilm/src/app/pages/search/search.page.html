@@ -75,7 +75,8 @@
       <ion-col size="6" size-sm="4" size-md="3" size-lg="2" *ngFor="let peli of peliculas.slice(0, peliculasVisibles)">
         <ion-card (click)="verFicha(peli)">
           <div class="poster-container">
-            <ion-img [src]="getImageUrl(peli.poster_path)" [alt]="peli.title"></ion-img>
+            <img [src]="getImageUrl(peli.poster_path)" [alt]="peli.title" class="poster-img" loading="lazy"
+              (load)="onImageLoad($event)" (error)="onImageError($event)">
             <div class="rating-badge" *ngIf="peli.vote_average >= 0">
               <span>⭐ {{ peli.vote_average | number:'1.1-1' }}</span>
             </div>

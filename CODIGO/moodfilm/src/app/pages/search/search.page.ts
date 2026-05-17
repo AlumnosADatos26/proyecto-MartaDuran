@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { environment } from 'src/environments/environment';
 import { ActivatedRoute } from '@angular/router';
+import { arrowBackOutline, trashOutline, filterOutline, chevronUpOutline } from 'ionicons/icons';
+import { addIcons } from 'ionicons';
 
 @Component({
   selector: 'app-search',
@@ -61,13 +63,16 @@ export class SearchPage implements OnInit {
     private movieService: MovieService,
     private router: Router,
     private route: ActivatedRoute
-  ) { }
+  ) {
+    addIcons({ arrowBackOutline, trashOutline, filterOutline, chevronUpOutline });
+  }
 
   ionViewWillEnter() {
     const mood = this.route.snapshot.queryParams['mood'];
     console.log('ionViewWillEnter, mood en URL:', mood);
 
     if (mood) {
+      this.nombrePeli = '';
       this.selectedMood = mood;
       this.showFilters = true;
       this.search();
@@ -80,20 +85,28 @@ export class SearchPage implements OnInit {
       this.peliculas = [];
       this.searching = false;
       this.showFilters = false;
+      this.nombrePeli = '';
     }
+  }
+
+  ionViewWillLeave() {
+    this.isLoading = false;
+    this.searching = false;
   }
 
   ngOnInit() { }
 
   async onSearchInput() {
     if (this.nombrePeli.trim().length >= 3) {
+      //si el usuario escribe, limpiamos los filtros automáticamente
+      this.selectedMood = null;
+      this.selectedGenre = null;
+      this.selectedDuration = null;
       await this.search();
     } else if (this.nombrePeli.trim().length === 0) {
       this.peliculas = [];
       this.searching = false;
-      if (this.hasActiveFilters()) {
-        await this.search();
-      }
+      this.hasSearched = false;
     }
   }
 
@@ -189,9 +202,9 @@ export class SearchPage implements OnInit {
     }
 
     //filtros de calidad  para evitar respuestas vacías de la api
-    params['vote_count.gte'] = '100';         
-    params['vote_average.gte'] = '6.0';       
-    params['sort_by'] = 'popularity.desc';     
+    params['vote_count.gte'] = '100';
+    params['vote_average.gte'] = '6.0';
+    params['sort_by'] = 'popularity.desc';
     params['include_adult'] = 'false';
 
     return params;
@@ -281,6 +294,21 @@ export class SearchPage implements OnInit {
       replaceUrl: true
     });
     this.hasSearched = false;
+    // si hay algo escrito, volvemos a buscar sin filtros
+    if (this.nombrePeli.trim().length >= 3) {
+      this.search();
+    }
+  }
+
+  onImageLoad(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.classList.add('loaded');
+  }
+
+  onImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.src = 'assets/no-image.png';
+    img.classList.add('loaded');
   }
 
 }

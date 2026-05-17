@@ -64,20 +64,20 @@
             <ion-icon name="person-circle-outline"></ion-icon>
           </div>
           <div class="composer-body">
-            
+
             <textarea [(ngModel)]="movieService.nuevoComentario" placeholder="¿Qué te ha parecido esta película?"
               rows="3" class="comment-textarea" [maxlength]="maxCaracteres">
             </textarea>
             <!--ponemos un contador de caracteres-->
             <span class="char-counter">{{ movieService.nuevoComentario.length }}/{{ maxCaracteres }}</span>
-            
+
             <div class="composer-footer">
               <label class="toggle-label">
                 <input type="checkbox" [checked]="esPublico" (change)="esPublico = !esPublico">
                 <ion-icon [name]="esPublico ? 'globe-outline' : 'lock-closed-outline'"></ion-icon>
                 <span>{{esPublico ? 'Público' : 'Privado' }}</span>
               </label>
-              
+
               <button class="send-btn" (click)="enviarComentario(movie.id, movie.title)">
                 Publicar
               </button>
@@ -90,7 +90,7 @@
           <span><a (click)="irAlLogin()" class="login-link">Inicia sesión</a> para dejar un comentario</span>
         </div>
 
-        <div class="comments-list" *ngIf="movieService.comentarios.length > 0">
+        <div class="comments-list" *ngIf="movieService.comentarios.length > 0 && !loading">
           <div *ngFor="let c of comentariosVisibles" class="comment-card" [class.comment-privado]="!c.esPublico">
             <div class="comment-avatar">
               <img *ngIf="c.fotoPerfil" [src]="c.fotoPerfil" class="avatar-img">
@@ -112,15 +112,20 @@
             </div>
           </div>
 
-          <!-- bton ver mas-->
-          <div class="ver-mas-wrapper" *ngIf="comentariosMostrados < movieService.comentarios.length">
-            <button class="ver-mas-btn" (click)="verMasComentarios()">
+          <!-- bton ver mas y ver menos-->
+          <div class="ver-mas-wrapper" *ngIf="movieService.comentarios.length > 4">
+            <button class="ver-mas-btn" *ngIf="comentariosMostrados < movieService.comentarios.length"
+              (click)="verMasComentarios()">
               Ver más comentarios ({{ movieService.comentarios.length - comentariosMostrados }} restantes)
+            </button>
+            <button class="ver-mas-btn" *ngIf="comentariosMostrados >= movieService.comentarios.length"
+              (click)="verMenosComentarios()">
+              Ver menos
             </button>
           </div>
         </div>
 
-        <div class="no-comments" *ngIf="movieService.comentarios.length === 0">
+        <div class="no-comments" *ngIf="movieService.comentarios.length === 0 && !loading">
           <ion-icon name="chatbubbles-outline"></ion-icon>
           <p>Sé el primero en comentar</p>
         </div>
