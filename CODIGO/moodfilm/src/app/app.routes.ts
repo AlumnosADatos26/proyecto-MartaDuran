@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
 
@@ -7,13 +8,12 @@ export const routes: Routes = [
     redirectTo: 'login',
     pathMatch: 'full'
   },
-
+  
   {
     path: 'login',
     loadComponent: () =>
       import('./pages/login/login.page').then(m => m.LoginPage)
   },
-
   {
     path: 'tabs',
     loadChildren: () =>
@@ -21,12 +21,13 @@ export const routes: Routes = [
   },
   {
     path: 'register',
-    loadComponent: () => import('./pages/register/register.page').then( m => m.RegisterPage)
+    loadComponent: () => import('./pages/register/register.page').then(m => m.RegisterPage)
   },
   {
     path: 'list-movies',
-    loadComponent: () => import('./pages/list-movies/list-movies.page').then( m => m.ListMoviesPage)
-  }, 
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/list-movies/list-movies.page').then(m => m.ListMoviesPage)
+  },
   {
     path: 'movie-details',
     loadComponent: () =>
@@ -34,24 +35,26 @@ export const routes: Routes = [
   },
   {
     path: 'my-comments',
-    loadComponent: () => import('./pages/my-comments/my-comments.page').then( m => m.MyCommentsPage)
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/my-comments/my-comments.page').then(m => m.MyCommentsPage)
   },
   {
     path: 'edit-profile',
-    loadComponent: () => import('./pages/edit-profile/edit-profile.page').then( m => m.EditProfilePage)
-  },  {
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/edit-profile/edit-profile.page').then(m => m.EditProfilePage)
+  },
+  {
     path: 'my-lists',
-    loadComponent: () => import('./pages/my-lists/my-lists.page').then( m => m.MyListsPage)
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/my-lists/my-lists.page').then(m => m.MyListsPage)
   },
   {
     path: 'forgot-password',
-    loadComponent: () => import('./pages/forgot-password/forgot-password.page').then( m => m.ForgotPasswordPage)
+    loadComponent: () => import('./pages/forgot-password/forgot-password.page').then(m => m.ForgotPasswordPage)
   },
   {
     path: 'reset-password',
-    loadComponent: () => import('./pages/reset-password/reset-password.page').then( m => m.ResetPasswordPage)
+    loadComponent: () => import('./pages/reset-password/reset-password.page').then(m => m.ResetPasswordPage)
   }
-
-
 
 ];
