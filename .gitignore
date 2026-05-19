@@ -1,20 +1,2 @@
-# Node modules
-node_modules/
-
-# Angular cache
-.angular/
-
-# Build output
-www/
-dist/
-out-tsc/
-
-# Logs
-*.log
-
-# Environment files
-environment*.ts
-
-# OS files
-.DS_Store
-Thumbs.db
+node_modules/ 
+.angular/cache/ 
