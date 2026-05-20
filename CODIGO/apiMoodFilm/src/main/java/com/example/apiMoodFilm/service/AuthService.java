@@ -132,8 +132,7 @@ public class AuthService {
             usuario = nuevoUsuario;
 
         } else if (usuario.getProveedor() == AuthProvider.LOCAL) {
-            throw new org.springframework.web.server.ResponseStatusException(
-                    org.springframework.http.HttpStatus.BAD_REQUEST,
+            throw new RuntimeException(
                     "Este email ya está registrado con contraseña. Usa el login normal."
             );
         }
@@ -199,6 +198,4 @@ public class AuthService {
         tokenRecuperacionRepository.save(tokenRecuperacion);
     }
 
-    
 }
-
